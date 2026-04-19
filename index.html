@@ -100,11 +100,12 @@
   }
   @keyframes twinkle { from { opacity: 0.55; } to { opacity: 1; } }
 
-  /* canvas for live2d — gentle float in digital space */
+  /* canvas for live2d — gentle float in digital space, above all visuals */
   #canvas {
-    position: fixed; inset: 0; z-index: 3; display: block;
+    position: fixed; inset: 0; z-index: 50; display: block;
     width: 100vw; height: 100vh;
     animation: float 7s ease-in-out infinite;
+    pointer-events: none;
   }
   @keyframes float {
     0%, 100% { transform: translate3d(0, 0, 0); }
