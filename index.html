@@ -526,59 +526,37 @@
   #tagTop { top: 6px; left: 50%; transform: translateX(-50%); }
   #tagBot { bottom: 6px; left: 50%; transform: translateX(-50%); }
 
-  /* GOVEE smart-home control */
-  .govee-trigger {
-    position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
-    z-index: 25;
-    padding: 14px 22px;
-    background: rgba(20, 60, 100, 0.7);
+  /* GOVEE smart-home control (lives inside a side widget) */
+  .gactions { display: flex; gap: 6px; }
+  .gactions button {
+    background: transparent; border: 1px solid var(--c-cyan-faint);
+    color: var(--c-cyan-dim); padding: 4px 8px;
+    font-family: var(--font-mono); font-size: 11px; cursor: pointer;
+    border-radius: 3px; min-width: 32px; min-height: 28px;
+  }
+  .gactions button:hover { color: var(--c-cyan); border-color: var(--c-cyan); }
+  .govee-connect-btn {
+    width: 100%; padding: 14px;
+    margin: 6px 0 4px;
+    background: rgba(20, 60, 100, 0.5);
     border: 1px solid var(--c-cyan);
     color: var(--c-cyan);
-    font-family: var(--font-mono); font-size: 13px;
-    letter-spacing: 2.5px;
-    cursor: pointer; border-radius: 4px;
-    text-shadow: 0 0 6px var(--c-cyan-dim);
-    box-shadow: 0 0 16px var(--c-cyan-faint), inset 0 0 12px var(--c-cyan-faint);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    min-height: 48px;
-  }
-  .govee-trigger:hover { background: var(--c-cyan-faint); color: #fff; }
-  .govee-trigger.hidden, .govee-panel.hidden { display: none; }
-
-  .govee-panel {
-    position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
-    z-index: 25;
-    width: clamp(320px, 38vw, 460px);
-    background: var(--c-panel);
-    border: 1px solid var(--c-panel-edge);
-    backdrop-filter: blur(10px) saturate(140%);
-    -webkit-backdrop-filter: blur(10px) saturate(140%);
-    padding: 14px 18px;
     font-family: var(--font-mono); font-size: 12px;
-    color: #cce8f5;
-    clip-path: polygon(0 8px, 8px 0, calc(100% - 16px) 0, 100% 16px,
-                       100% calc(100% - 8px), calc(100% - 8px) 100%,
-                       16px 100%, 0 calc(100% - 16px));
-    box-shadow: 0 0 28px rgba(0,0,0,0.5), inset 0 0 24px rgba(77,217,255,0.06);
+    letter-spacing: 2px; cursor: pointer;
+    border-radius: 3px;
+    text-shadow: 0 0 6px var(--c-cyan-dim);
+    box-shadow: 0 0 12px var(--c-cyan-faint);
+    min-height: 44px;
   }
-  .govee-panel .ghead {
-    font-family: var(--font-disp); font-weight: 700;
-    font-size: 11px; letter-spacing: 2.5px;
-    color: var(--c-cyan); text-shadow: 0 0 8px var(--c-cyan-dim);
-    margin-bottom: 10px; padding-bottom: 6px;
-    border-bottom: 1px dashed var(--c-cyan-faint);
-    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  .govee-connect-btn:hover { background: var(--c-cyan-faint); color: #fff; }
+  .govee-offline {
+    text-align: center;
+    color: var(--c-cyan-dim);
+    font-size: 11px; letter-spacing: 2px;
+    padding: 8px 0 4px;
   }
-  .govee-panel .gactions { display: flex; gap: 6px; }
-  .govee-panel .gactions button {
-    background: transparent; border: 1px solid var(--c-cyan-faint);
-    color: var(--c-cyan-dim); padding: 6px 10px;
-    font-family: var(--font-mono); font-size: 12px; cursor: pointer;
-    border-radius: 3px; min-width: 36px; min-height: 32px;
-  }
-  .govee-panel .gactions button:hover { color: var(--c-cyan); border-color: var(--c-cyan); }
-  .govee-row { margin-bottom: 12px; }
+  .hidden { display: none !important; }
+  .govee-row { margin-bottom: 8px; }
   #goveeRoom {
     width: 100%;
     background: rgba(0,0,0,0.4);
@@ -800,35 +778,28 @@
     <div class="row"><span class="k">COHERENCE</span><span class="v"><span class="bar" style="border-color:var(--c-magenta-dim)"><span id="bCoh" style="background:linear-gradient(90deg,var(--c-magenta),#ff8eff);box-shadow:0 0 6px var(--c-magenta-dim);width:74%"></span></span></span></div>
     <div class="row"><span class="k">ENTROPY</span><span class="v" style="color:var(--c-magenta);text-shadow:0 0 6px var(--c-magenta-dim)" id="entVal">0.42</span></div>
   </div>
-  <div class="panel" id="pMR">
-    <div class="head">NEURAL//MESH <span class="dot"></span></div>
-    <div class="row"><span class="k">NODES</span><span class="v" id="meshNodes">48</span></div>
-    <div class="row"><span class="k">EDGES</span><span class="v" id="meshEdges">132</span></div>
-    <div class="row"><span class="k">DENSITY</span><span class="v"><span class="bar"><span id="bDens" style="width:46%"></span></span></span></div>
-    <div class="row"><span class="k">FLUX</span><span class="v green" id="meshFlux">+0.42</span></div>
-    <div class="ring-row">
-      <div class="ring">
-        <div class="gauge" style="width:54px;height:54px;margin:0 auto">
-          <svg viewBox="0 0 100 100">
-            <circle class="track" cx="50" cy="50" r="42"/>
-            <circle class="arc" id="ringA" cx="50" cy="50" r="42"
-              stroke-dasharray="263.9" stroke-dashoffset="120"/>
-          </svg>
-          <div class="num" id="ringNumA" style="font-size:11px">42</div>
-        </div>
-        <div class="lbl">SYNC</div>
+  <div class="panel" id="pGovee">
+    <div class="head">
+      SMART HOME // GOVEE
+      <div class="gactions" id="goveeActions" style="margin-left:auto">
+        <button id="goveeRefresh" title="Refresh devices">↻</button>
+        <button id="goveeKeyEdit" title="Reset API key">⚙</button>
       </div>
-      <div class="ring">
-        <div class="gauge" style="width:54px;height:54px;margin:0 auto">
-          <svg viewBox="0 0 100 100">
-            <circle class="track" cx="50" cy="50" r="42"/>
-            <circle class="arc" id="ringB" cx="50" cy="50" r="42"
-              stroke-dasharray="263.9" stroke-dashoffset="80" style="stroke:var(--c-green);filter:drop-shadow(0 0 4px var(--c-green))"/>
-          </svg>
-          <div class="num" id="ringNumB" style="font-size:11px;color:var(--c-green);text-shadow:0 0 6px var(--c-green)">69</div>
-        </div>
-        <div class="lbl">DRIFT</div>
+      <span class="dot" id="goveeDot"></span>
+    </div>
+    <div id="goveeConnect">
+      <div class="govee-offline">— OFFLINE —</div>
+      <button class="govee-connect-btn" id="goveeTrigger">⚡ SET API KEY</button>
+    </div>
+    <div id="goveeControls" class="hidden">
+      <div class="govee-row">
+        <select id="goveeRoom"><option>—</option></select>
       </div>
+      <div class="power-row">
+        <button class="btn-power on"  id="goveeOn">⚡ ON</button>
+        <button class="btn-power off" id="goveeOff">○ OFF</button>
+      </div>
+      <div class="govee-chat" id="goveeChat"></div>
     </div>
   </div>
   <div class="panel fill" id="pBR">
@@ -840,26 +811,6 @@
     <button id="cycle" onclick="location.reload()">↻ CYCLE_TARGET</button>
   </div>
 </div><!-- /.col.right -->
-
-<button id="goveeTrigger" class="govee-trigger hidden">⚡ SET GOVEE KEY</button>
-
-<div class="govee-panel hidden" id="goveePanel">
-  <div class="ghead">
-    SMART HOME // GOVEE LINK
-    <div class="gactions">
-      <button id="goveeRefresh" title="Refresh devices">↻</button>
-      <button id="goveeKeyEdit" title="Reset API key">⚙</button>
-    </div>
-  </div>
-  <div class="govee-row">
-    <select id="goveeRoom"><option>—</option></select>
-  </div>
-  <div class="power-row">
-    <button class="btn-power on"  id="goveeOn">⚡ ON</button>
-    <button class="btn-power off" id="goveeOff">○ OFF</button>
-  </div>
-  <div class="govee-chat" id="goveeChat"></div>
-</div>
 
 <div class="modal-overlay hidden" id="goveeModal">
   <div class="modal-content">
@@ -1164,18 +1115,7 @@
     }
     requestAnimationFrame(frame);
 
-    // expose stats
-    setInterval(() => {
-      document.getElementById('meshNodes').textContent = String(N);
-      document.getElementById('meshEdges').textContent = String(edgeCount);
-      const dens = Math.min(100, edgeCount / (N * (N-1) / 2) * 100 * 4);
-      document.getElementById('bDens').style.width = dens.toFixed(0) + '%';
-      const flux = (Math.random() - 0.5) * 1.2;
-      const fluxEl = document.getElementById('meshFlux');
-      fluxEl.textContent = (flux >= 0 ? '+' : '') + flux.toFixed(2);
-      fluxEl.classList.toggle('green', flux >= 0);
-      fluxEl.classList.toggle('amber', flux < 0);
-    }, 800);
+    // (NEURAL//MESH stats panel was replaced by Govee widget — no readouts to update)
   })();
 
   /* -----------------------  SPARKLINE (oscilloscope)  ----------------------- */
@@ -1255,8 +1195,9 @@
     const ringB = document.getElementById('ringB');
     const numA = document.getElementById('ringNumA');
     const numB = document.getElementById('ringNumB');
-    [arc, ringA, ringB].forEach(e => e.setAttribute('stroke-dasharray', C));
+    [arc, ringA, ringB].filter(Boolean).forEach(e => e.setAttribute('stroke-dasharray', C));
     function set(el, txt, pct) {
+      if (!el) return;
       el.setAttribute('stroke-dashoffset', C * (1 - pct / 100));
       if (txt) txt.textContent = String(Math.round(pct));
     }
@@ -1804,9 +1745,12 @@
     const ROOM_STORE = 'goveeSelectedRoom';
     const $ = (id) => document.getElementById(id);
 
-    const trigger = $('goveeTrigger');
-    const panel   = $('goveePanel');
-    const modal   = $('goveeModal');
+    const trigger     = $('goveeTrigger');
+    const connectBox  = $('goveeConnect');
+    const controlsBox = $('goveeControls');
+    const actionsBox  = $('goveeActions');
+    const dotEl       = $('goveeDot');
+    const modal       = $('goveeModal');
     const keyIn   = $('goveeKeyInput');
     const select  = $('goveeRoom');
     const btnOn   = $('goveeOn');
@@ -1875,6 +1819,17 @@
       return r.json();
     }
 
+    // Govee Developer API doesn't expose rooms; infer them from deviceName.
+    function inferRoom(name) {
+      const t = (name || '').trim();
+      if (!t) return 'Unknown';
+      const suffixes = /\s*\b(lamp|lamps|light|lights|strip|strips|bulb|bulbs|led|leds|panel|panels|fan|fans|backlight|tv|monitor|tube|tubes|ring|spot|spots|bar|bars|cube|cubes|glide|hexa|gaming|desk)\b.*$/i;
+      const stripped = t.replace(suffixes, '').trim();
+      return stripped.replace(/\s+\d+$/, '').trim() || t;
+    }
+
+    let rooms = new Map(); // roomName → [{sku, device, deviceName}]
+
     async function loadDevices() {
       const key = getKey();
       if (!key) return;
@@ -1889,15 +1844,23 @@
           chat('!!!', 'no controllable devices found', 'warn');
           return;
         }
-        lights.forEach(d => {
+        rooms = new Map();
+        for (const d of lights) {
+          const room = inferRoom(d.deviceName);
+          if (!rooms.has(room)) rooms.set(room, []);
+          rooms.get(room).push(d);
+        }
+        const sortedRooms = [...rooms.keys()].sort();
+        for (const r of sortedRooms) {
           const opt = document.createElement('option');
-          opt.value = d.device + '|' + d.sku;
-          opt.textContent = d.deviceName || d.device;
+          opt.value = r;
+          const n = rooms.get(r).length;
+          opt.textContent = `${r}${n > 1 ? `  (${n})` : ''}`;
           select.appendChild(opt);
-        });
+        }
         const last = getRoom();
         if (last && [...select.options].some(o => o.value === last)) select.value = last;
-        chat('OK ', `linked ${lights.length} device${lights.length>1?'s':''}`, 'ok');
+        chat('OK ', `linked ${lights.length} device${lights.length>1?'s':''} across ${sortedRooms.length} room${sortedRooms.length>1?'s':''}`, 'ok');
       } catch (e) {
         chat('ERR', `${e.message} — check API key or CORS`, 'err');
       }
@@ -1906,24 +1869,36 @@
     async function power(value) {
       const key = getKey();
       if (!key) return;
-      const sel = select.value;
-      if (!sel || sel.startsWith('—')) { chat('!!!', 'pick a room first', 'warn'); return; }
-      const [device, sku] = sel.split('|');
+      const room = select.value;
+      if (!room || room.startsWith('—') || !rooms.has(room)) { chat('!!!', 'pick a room first', 'warn'); return; }
+      const devs = rooms.get(room);
       btnOn.disabled = btnOff.disabled = true;
-      try {
-        await controlDevice(key, sku, device, value);
-        chat(value === 1 ? '>>>' : '<<<', pick(value === 1 ? onMsg : offMsg), 'ok');
-      } catch (e) {
-        chat('ERR', `${pick(errMsg)} (${e.message})`, 'err');
-      } finally {
-        btnOn.disabled = btnOff.disabled = false;
+      const results = await Promise.allSettled(
+        devs.map(d => controlDevice(key, d.sku, d.device, value))
+      );
+      const ok   = results.filter(r => r.status === 'fulfilled').length;
+      const fail = results.length - ok;
+      if (ok > 0) {
+        const tag = value === 1 ? '>>>' : '<<<';
+        const suffix = devs.length > 1 ? ` [${ok}/${devs.length} ${room}]` : ` [${room}]`;
+        chat(tag, pick(value === 1 ? onMsg : offMsg) + suffix, 'ok');
       }
+      if (fail > 0) {
+        const firstErr = results.find(r => r.status === 'rejected');
+        chat('ERR', `${pick(errMsg)} (${fail} failed${firstErr ? ': ' + firstErr.reason.message : ''})`, 'err');
+      }
+      btnOn.disabled = btnOff.disabled = false;
     }
 
     function showState() {
       const has = !!getKey();
-      trigger.classList.toggle('hidden', has);
-      panel.classList.toggle('hidden', !has);
+      connectBox.classList.toggle('hidden', has);
+      controlsBox.classList.toggle('hidden', !has);
+      actionsBox.classList.toggle('hidden', !has);
+      if (dotEl) {
+        dotEl.style.background = has ? 'var(--c-green)' : 'var(--c-red)';
+        dotEl.style.boxShadow  = '0 0 8px ' + (has ? 'var(--c-green)' : 'var(--c-red)');
+      }
     }
 
     function openModal() {
