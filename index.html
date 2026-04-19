@@ -172,15 +172,27 @@
   #reticle::after  { width: 16px; height: 1px; transform: translate(-50%, -50%); }
 
   /* ------- HUD PANELS ------- */
+  .col {
+    position: fixed;
+    top: 16px; bottom: 16px;
+    width: clamp(230px, 22vw, 320px);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 10;
+    pointer-events: none;
+  }
+  .col.left  { left: 16px; }
+  .col.right { right: 16px; }
   .panel {
-    position: fixed; z-index: 10;
+    position: relative; z-index: 10;
     background: var(--c-panel);
     border: 1px solid var(--c-panel-edge);
     backdrop-filter: blur(8px) saturate(140%);
     -webkit-backdrop-filter: blur(8px) saturate(140%);
-    padding: 14px 18px;
+    padding: 12px 16px;
     font-size: 12px;
-    line-height: 1.55;
+    line-height: 1.5;
     letter-spacing: 0.5px;
     color: #cce8f5;
     box-shadow:
@@ -192,8 +204,12 @@
       100% calc(100% - 8px), calc(100% - 8px) 100%,
       16px 100%, 0 calc(100% - 16px)
     );
-    min-width: 220px;
+    width: 100%;
+    flex: 0 0 auto;
+    pointer-events: auto;
   }
+  .panel.fill { flex: 1 1 0; min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
+  .panel.fill #log { flex: 1 1 0; height: auto; }
   .panel .head {
     font-family: var(--font-disp);
     font-weight: 700;
@@ -235,15 +251,7 @@
     transition: width 0.3s;
   }
 
-  /* portrait stack: 4 panels per side, fixed offsets */
-  #pTL { top: 20px;  left: 20px;  width: 270px; }
-  #pHL { top: 270px; left: 20px;  width: 270px; }
-  #pML { top: 580px; left: 20px;  width: 270px; }
-  #pBL { bottom: 20px; left: 20px; width: 270px; }
-  #pTR { top: 20px;  right: 20px; width: 270px; }
-  #pHR { top: 270px; right: 20px; width: 270px; }
-  #pMR { top: 580px; right: 20px; width: 270px; }
-  #pBR { bottom: 20px; right: 20px; width: 270px; }
+  /* (panels live inside .col left / .col right; no individual positioning) */
 
   /* TELEMETRY widgets */
   .spark-wrap { display: block; width: 100%; height: 50px; margin-top: 4px;
@@ -500,122 +508,120 @@
 <div class="tag" id="tagTop">SOUL.SYS // RND.MATRIX // v2.3.0 // SECURE LINK</div>
 <div class="tag" id="tagBot">// CUBISM_RUNTIME_OK // GPU_OK // FRAME_BUFFER_OK //</div>
 
-<div class="panel" id="pTL">
-  <div class="head">SYS//STATUS <span class="dot"></span></div>
-  <div class="row"><span class="k">UPLINK</span><span class="v green">ONLINE</span></div>
-  <div class="row"><span class="k">PING</span><span class="v"><span id="ping">042</span> ms</span></div>
-  <div class="row"><span class="k">FPS</span><span class="v" id="fps">60</span></div>
-  <div class="row"><span class="k">CPU</span><span class="v"><span class="bar"><span id="bCpu" style="width:34%"></span></span></span></div>
-  <div class="row"><span class="k">MEM</span><span class="v"><span class="bar"><span id="bMem" style="width:62%"></span></span></span></div>
-  <div class="row"><span class="k">NEURAL</span><span class="v green">SYNCED</span></div>
-</div>
-
-<div class="panel" id="pTR">
-  <div class="head">TARGET//ANALYSIS <span class="dot"></span></div>
-  <div class="row"><span class="k">DESIGNATION</span><span class="v" id="tName">—</span></div>
-  <div class="row"><span class="k">CLASS</span><span class="v">LIVE2D_v4</span></div>
-  <div class="row"><span class="k">STATE</span><span class="v green">ANIMATED</span></div>
-  <div class="row"><span class="k">SIGNAL</span><span class="v"><span class="bar"><span style="width:88%"></span></span></span></div>
-  <div class="row"><span class="k">SOUL_ID</span><span class="v" id="tId">0x0000.0000</span></div>
-  <div class="row"><span class="k">ORIGIN</span><span class="v">CUBISM/SAMPLES</span></div>
-</div>
-
-<div class="panel" id="pHL">
-  <div class="head" style="color:var(--c-red);text-shadow:0 0 8px var(--c-red);border-bottom-color:rgba(255,85,119,0.3)">HEALTH//VITALS <span class="dot" style="background:var(--c-red);box-shadow:0 0 8px var(--c-red)"></span></div>
-  <div class="heart-row">
-    <svg class="heart" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-    </svg>
-    <div class="bpm-block">
-      <div><span class="bpm-num" id="bpmNum">72</span> <span class="bpm-lbl">BPM</span></div>
-      <div class="bpm-lbl" style="margin-top:6px">SINUS RHYTHM // STABLE</div>
-    </div>
+<div class="col left">
+  <div class="panel" id="pTL">
+    <div class="head">SYS//STATUS <span class="dot"></span></div>
+    <div class="row"><span class="k">UPLINK</span><span class="v green">ONLINE</span></div>
+    <div class="row"><span class="k">PING</span><span class="v"><span id="ping">042</span> ms</span></div>
+    <div class="row"><span class="k">FPS</span><span class="v" id="fps">60</span></div>
+    <div class="row"><span class="k">CPU</span><span class="v"><span class="bar"><span id="bCpu" style="width:34%"></span></span></span></div>
+    <div class="row"><span class="k">MEM</span><span class="v"><span class="bar"><span id="bMem" style="width:62%"></span></span></span></div>
+    <div class="row"><span class="k">NEURAL</span><span class="v green">SYNCED</span></div>
   </div>
-  <div class="row" style="margin-top:8px"><span class="k">ECG // LEAD II</span></div>
-  <canvas id="ecg" class="ecg-wrap"></canvas>
-  <div class="row" style="margin-top:6px"><span class="k">VOICE.AMP</span></div>
-  <div class="voice-eq" id="voiceEq"></div>
-  <div class="row" style="margin-top:6px"><span class="k">O₂ SAT</span><span class="v" style="color:var(--c-red);text-shadow:0 0 6px var(--c-red-dim)" id="o2">98%</span></div>
-  <div class="row"><span class="k">BP</span><span class="v" style="color:var(--c-red);text-shadow:0 0 6px var(--c-red-dim)" id="bp">118 / 76</span></div>
-</div>
-
-<div class="panel" id="pHR">
-  <div class="head" style="color:var(--c-magenta);text-shadow:0 0 8px var(--c-magenta);border-bottom-color:rgba(201,125,255,0.3)">PSYCHE//SPECTRUM <span class="dot" style="background:var(--c-magenta);box-shadow:0 0 8px var(--c-magenta)"></span></div>
-  <div class="sun-wrap">
-    <canvas id="sunburst"></canvas>
-    <div class="sun-center">
-      <div class="sun-num" id="sunNum">432</div>
-      <div class="sun-unit">Hz</div>
-      <div class="sun-lbl">SOUL_FREQ</div>
-    </div>
-  </div>
-  <div class="row"><span class="k">RESONANCE</span><span class="v" style="color:var(--c-magenta);text-shadow:0 0 6px var(--c-magenta-dim)" id="resVal">θ-7.4</span></div>
-  <div class="row"><span class="k">COHERENCE</span><span class="v"><span class="bar" style="border-color:var(--c-magenta-dim)"><span id="bCoh" style="background:linear-gradient(90deg,var(--c-magenta),#ff8eff);box-shadow:0 0 6px var(--c-magenta-dim);width:74%"></span></span></span></div>
-  <div class="row"><span class="k">ENTROPY</span><span class="v" style="color:var(--c-magenta);text-shadow:0 0 6px var(--c-magenta-dim)" id="entVal">0.42</span></div>
-</div>
-
-<div class="panel" id="pML">
-  <div class="head">TELEMETRY <span class="dot"></span></div>
-  <div class="row"><span class="k">NEURAL.OSC</span></div>
-  <canvas id="spark" class="spark-wrap"></canvas>
-  <div class="row" style="margin-top:6px"><span class="k">SPECTRUM</span></div>
-  <div class="spectrum" id="spectrum"></div>
-  <div class="row" style="margin-top:6px"><span class="k">SOUL_AMP</span></div>
-  <div class="gauge">
-    <svg viewBox="0 0 100 100">
-      <circle class="track" cx="50" cy="50" r="42"/>
-      <circle class="arc" id="gaugeArc" cx="50" cy="50" r="42"
-        stroke-dasharray="263.9" stroke-dashoffset="60"/>
-    </svg>
-    <div class="num" id="gaugeNum">78</div>
-  </div>
-</div>
-
-<div class="panel" id="pMR">
-  <div class="head">NEURAL//MESH <span class="dot"></span></div>
-  <div class="row"><span class="k">NODES</span><span class="v" id="meshNodes">48</span></div>
-  <div class="row"><span class="k">EDGES</span><span class="v" id="meshEdges">132</span></div>
-  <div class="row"><span class="k">DENSITY</span><span class="v"><span class="bar"><span id="bDens" style="width:46%"></span></span></span></div>
-  <div class="row"><span class="k">FLUX</span><span class="v green" id="meshFlux">+0.42</span></div>
-  <div class="ring-row">
-    <div class="ring">
-      <div class="gauge" style="width:54px;height:54px;margin:0 auto">
-        <svg viewBox="0 0 100 100">
-          <circle class="track" cx="50" cy="50" r="42"/>
-          <circle class="arc" id="ringA" cx="50" cy="50" r="42"
-            stroke-dasharray="263.9" stroke-dashoffset="120"/>
-        </svg>
-        <div class="num" id="ringNumA" style="font-size:11px">42</div>
+  <div class="panel" id="pHL">
+    <div class="head" style="color:var(--c-red);text-shadow:0 0 8px var(--c-red);border-bottom-color:rgba(255,85,119,0.3)">HEALTH//VITALS <span class="dot" style="background:var(--c-red);box-shadow:0 0 8px var(--c-red)"></span></div>
+    <div class="heart-row">
+      <svg class="heart" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+      </svg>
+      <div class="bpm-block">
+        <div><span class="bpm-num" id="bpmNum">72</span> <span class="bpm-lbl">BPM</span></div>
+        <div class="bpm-lbl" style="margin-top:6px">SINUS RHYTHM // STABLE</div>
       </div>
-      <div class="lbl">SYNC</div>
     </div>
-    <div class="ring">
-      <div class="gauge" style="width:54px;height:54px;margin:0 auto">
-        <svg viewBox="0 0 100 100">
-          <circle class="track" cx="50" cy="50" r="42"/>
-          <circle class="arc" id="ringB" cx="50" cy="50" r="42"
-            stroke-dasharray="263.9" stroke-dashoffset="80" style="stroke:var(--c-green);filter:drop-shadow(0 0 4px var(--c-green))"/>
-        </svg>
-        <div class="num" id="ringNumB" style="font-size:11px;color:var(--c-green);text-shadow:0 0 6px var(--c-green)">69</div>
-      </div>
-      <div class="lbl">DRIFT</div>
+    <div class="row" style="margin-top:8px"><span class="k">ECG // LEAD II</span></div>
+    <canvas id="ecg" class="ecg-wrap"></canvas>
+    <div class="row" style="margin-top:6px"><span class="k">VOICE.AMP</span></div>
+    <div class="voice-eq" id="voiceEq"></div>
+    <div class="row" style="margin-top:6px"><span class="k">O₂ SAT</span><span class="v" style="color:var(--c-red);text-shadow:0 0 6px var(--c-red-dim)" id="o2">98%</span></div>
+    <div class="row"><span class="k">BP</span><span class="v" style="color:var(--c-red);text-shadow:0 0 6px var(--c-red-dim)" id="bp">118 / 76</span></div>
+  </div>
+  <div class="panel" id="pML">
+    <div class="head">TELEMETRY <span class="dot"></span></div>
+    <div class="row"><span class="k">NEURAL.OSC</span></div>
+    <canvas id="spark" class="spark-wrap"></canvas>
+    <div class="row" style="margin-top:6px"><span class="k">SPECTRUM</span></div>
+    <div class="spectrum" id="spectrum"></div>
+    <div class="row" style="margin-top:6px"><span class="k">SOUL_AMP</span></div>
+    <div class="gauge">
+      <svg viewBox="0 0 100 100">
+        <circle class="track" cx="50" cy="50" r="42"/>
+        <circle class="arc" id="gaugeArc" cx="50" cy="50" r="42"
+          stroke-dasharray="263.9" stroke-dashoffset="60"/>
+      </svg>
+      <div class="num" id="gaugeNum">78</div>
     </div>
   </div>
-</div>
+  <div class="panel fill" id="pBL">
+    <div class="head">LOG//STREAM <span class="dot"></span></div>
+    <div id="log"></div>
+  </div>
+</div><!-- /.col.left -->
 
-<div class="panel" id="pBL">
-  <div class="head">LOG//STREAM <span class="dot"></span></div>
-  <div id="log"></div>
-</div>
-
-<div class="panel" id="pBR">
-  <div class="head">CTRL//PANEL <span class="dot"></span></div>
-  <div class="row"><span class="k">UPTIME</span><span class="v" id="uptime">00:00:00</span></div>
-  <div class="row"><span class="k">SECTOR</span><span class="v" id="sector">A7-NORTH</span></div>
-  <div class="row"><span class="k">COORD</span><span class="v" id="coord">0xFF44.A8B2</span></div>
-  <div class="row"><span class="k">NEXT_CYCLE</span><span class="v amber" id="nextCycle">03:00</span></div>
-  <button id="cycle" onclick="location.reload()">↻ CYCLE_TARGET</button>
-</div>
+<div class="col right">
+  <div class="panel" id="pTR">
+    <div class="head">TARGET//ANALYSIS <span class="dot"></span></div>
+    <div class="row"><span class="k">DESIGNATION</span><span class="v" id="tName">—</span></div>
+    <div class="row"><span class="k">CLASS</span><span class="v">LIVE2D_v4</span></div>
+    <div class="row"><span class="k">STATE</span><span class="v green">ANIMATED</span></div>
+    <div class="row"><span class="k">SIGNAL</span><span class="v"><span class="bar"><span style="width:88%"></span></span></span></div>
+    <div class="row"><span class="k">SOUL_ID</span><span class="v" id="tId">0x0000.0000</span></div>
+    <div class="row"><span class="k">ORIGIN</span><span class="v">CUBISM/SAMPLES</span></div>
+  </div>
+  <div class="panel" id="pHR">
+    <div class="head" style="color:var(--c-magenta);text-shadow:0 0 8px var(--c-magenta);border-bottom-color:rgba(201,125,255,0.3)">PSYCHE//SPECTRUM <span class="dot" style="background:var(--c-magenta);box-shadow:0 0 8px var(--c-magenta)"></span></div>
+    <div class="sun-wrap">
+      <canvas id="sunburst"></canvas>
+      <div class="sun-center">
+        <div class="sun-num" id="sunNum">432</div>
+        <div class="sun-unit">Hz</div>
+        <div class="sun-lbl">SOUL_FREQ</div>
+      </div>
+    </div>
+    <div class="row"><span class="k">RESONANCE</span><span class="v" style="color:var(--c-magenta);text-shadow:0 0 6px var(--c-magenta-dim)" id="resVal">θ-7.4</span></div>
+    <div class="row"><span class="k">COHERENCE</span><span class="v"><span class="bar" style="border-color:var(--c-magenta-dim)"><span id="bCoh" style="background:linear-gradient(90deg,var(--c-magenta),#ff8eff);box-shadow:0 0 6px var(--c-magenta-dim);width:74%"></span></span></span></div>
+    <div class="row"><span class="k">ENTROPY</span><span class="v" style="color:var(--c-magenta);text-shadow:0 0 6px var(--c-magenta-dim)" id="entVal">0.42</span></div>
+  </div>
+  <div class="panel" id="pMR">
+    <div class="head">NEURAL//MESH <span class="dot"></span></div>
+    <div class="row"><span class="k">NODES</span><span class="v" id="meshNodes">48</span></div>
+    <div class="row"><span class="k">EDGES</span><span class="v" id="meshEdges">132</span></div>
+    <div class="row"><span class="k">DENSITY</span><span class="v"><span class="bar"><span id="bDens" style="width:46%"></span></span></span></div>
+    <div class="row"><span class="k">FLUX</span><span class="v green" id="meshFlux">+0.42</span></div>
+    <div class="ring-row">
+      <div class="ring">
+        <div class="gauge" style="width:54px;height:54px;margin:0 auto">
+          <svg viewBox="0 0 100 100">
+            <circle class="track" cx="50" cy="50" r="42"/>
+            <circle class="arc" id="ringA" cx="50" cy="50" r="42"
+              stroke-dasharray="263.9" stroke-dashoffset="120"/>
+          </svg>
+          <div class="num" id="ringNumA" style="font-size:11px">42</div>
+        </div>
+        <div class="lbl">SYNC</div>
+      </div>
+      <div class="ring">
+        <div class="gauge" style="width:54px;height:54px;margin:0 auto">
+          <svg viewBox="0 0 100 100">
+            <circle class="track" cx="50" cy="50" r="42"/>
+            <circle class="arc" id="ringB" cx="50" cy="50" r="42"
+              stroke-dasharray="263.9" stroke-dashoffset="80" style="stroke:var(--c-green);filter:drop-shadow(0 0 4px var(--c-green))"/>
+          </svg>
+          <div class="num" id="ringNumB" style="font-size:11px;color:var(--c-green);text-shadow:0 0 6px var(--c-green)">69</div>
+        </div>
+        <div class="lbl">DRIFT</div>
+      </div>
+    </div>
+  </div>
+  <div class="panel fill" id="pBR">
+    <div class="head">CTRL//PANEL <span class="dot"></span></div>
+    <div class="row"><span class="k">UPTIME</span><span class="v" id="uptime">00:00:00</span></div>
+    <div class="row"><span class="k">SECTOR</span><span class="v" id="sector">A7-NORTH</span></div>
+    <div class="row"><span class="k">COORD</span><span class="v" id="coord">0xFF44.A8B2</span></div>
+    <div class="row"><span class="k">NEXT_CYCLE</span><span class="v amber" id="nextCycle">03:00</span></div>
+    <button id="cycle" onclick="location.reload()">↻ CYCLE_TARGET</button>
+  </div>
+</div><!-- /.col.right -->
 
 <div id="boot">
   <div class="boot-stage" id="stg1">
