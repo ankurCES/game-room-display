@@ -672,29 +672,57 @@
   const WIDG = 'https://cdn.jsdelivr.net/npm/live2d-widget-model-';
   const models = [
     // Live2D Inc. official Cubism 4 samples (Ren omitted — moc3 v06 unsupported by current Cubism Core)
-    { name: 'Hiyori',  cls: 'CUBISM_v4', url: `${CUB4}/Hiyori/Hiyori.model3.json` },
-    { name: 'Haru',    cls: 'CUBISM_v4', url: `${CUB4}/Haru/Haru.model3.json`     },
-    { name: 'Mao',     cls: 'CUBISM_v4', url: `${CUB4}/Mao/Mao.model3.json`       },
-    { name: 'Mark',    cls: 'CUBISM_v4', url: `${CUB4}/Mark/Mark.model3.json`     },
-    { name: 'Natori',  cls: 'CUBISM_v4', url: `${CUB4}/Natori/Natori.model3.json` },
-    { name: 'Rice',    cls: 'CUBISM_v4', url: `${CUB4}/Rice/Rice.model3.json`     },
-    { name: 'Wanko',   cls: 'CUBISM_v4', url: `${CUB4}/Wanko/Wanko.model3.json`   },
+    { name: 'Hiyori',     cls: 'CUBISM_v4', url: `${CUB4}/Hiyori/Hiyori.model3.json` },
+    { name: 'Haru',       cls: 'CUBISM_v4', url: `${CUB4}/Haru/Haru.model3.json`     },
+    { name: 'Mao',        cls: 'CUBISM_v4', url: `${CUB4}/Mao/Mao.model3.json`       },
+    { name: 'Mark',       cls: 'CUBISM_v4', url: `${CUB4}/Mark/Mark.model3.json`     },
+    { name: 'Natori',     cls: 'CUBISM_v4', url: `${CUB4}/Natori/Natori.model3.json` },
+    { name: 'Rice',       cls: 'CUBISM_v4', url: `${CUB4}/Rice/Rice.model3.json`     },
+    { name: 'Wanko',      cls: 'CUBISM_v4', url: `${CUB4}/Wanko/Wanko.model3.json`   },
     // Cubism 2 widget models (xiazeyu/live2d-widget-models — public sample assets)
-    { name: 'Shizuku', cls: 'CUBISM_v2', url: `${WIDG}shizuku/assets/shizuku.model.json` },
-    { name: 'Z16',     cls: 'CUBISM_v2', url: `${WIDG}z16/assets/z16.model.json`         },
-    { name: 'Koharu',  cls: 'CUBISM_v2', url: `${WIDG}koharu/assets/koharu.model.json`   },
-    { name: 'Haruto',  cls: 'CUBISM_v2', url: `${WIDG}haruto/assets/haruto.model.json`   },
-    { name: 'Tororo',  cls: 'CUBISM_v2', url: `${WIDG}tororo/assets/tororo.model.json`   },
-    { name: 'Hijiki',  cls: 'CUBISM_v2', url: `${WIDG}hijiki/assets/hijiki.model.json`   },
-    { name: 'Miku',    cls: 'CUBISM_v2', url: `${WIDG}miku/assets/miku.model.json`       },
-    { name: 'Nico',    cls: 'CUBISM_v2', url: `${WIDG}nico/assets/nico.model.json`       },
-    { name: 'Hibiki',  cls: 'CUBISM_v2', url: `${WIDG}hibiki/assets/hibiki.model.json`   },
-    { name: 'Izumi',   cls: 'CUBISM_v2', url: `${WIDG}izumi/assets/izumi.model.json`     },
-    { name: 'Tsumiki', cls: 'CUBISM_v2', url: `${WIDG}tsumiki/assets/tsumiki.model.json` },
-    { name: 'Nito',    cls: 'CUBISM_v2', url: `${WIDG}nito/assets/nito.model.json`       },
+    { name: 'Shizuku',    cls: 'CUBISM_v2', url: `${WIDG}shizuku/assets/shizuku.model.json` },
+    { name: 'Z16',        cls: 'CUBISM_v2', url: `${WIDG}z16/assets/z16.model.json`         },
+    { name: 'Koharu',     cls: 'CUBISM_v2', url: `${WIDG}koharu/assets/koharu.model.json`   },
+    { name: 'Haruto',     cls: 'CUBISM_v2', url: `${WIDG}haruto/assets/haruto.model.json`   },
+    { name: 'Tororo',     cls: 'CUBISM_v2', url: `${WIDG}tororo/assets/tororo.model.json`   },
+    { name: 'Hijiki',     cls: 'CUBISM_v2', url: `${WIDG}hijiki/assets/hijiki.model.json`   },
+    { name: 'Miku',       cls: 'CUBISM_v2', url: `${WIDG}miku/assets/miku.model.json`       },
+    { name: 'Nico',       cls: 'CUBISM_v2', url: `${WIDG}nico/assets/nico.model.json`       },
+    { name: 'Hibiki',     cls: 'CUBISM_v2', url: `${WIDG}hibiki/assets/hibiki.model.json`   },
+    { name: 'Izumi',      cls: 'CUBISM_v2', url: `${WIDG}izumi/assets/izumi.model.json`     },
+    { name: 'Tsumiki',    cls: 'CUBISM_v2', url: `${WIDG}tsumiki/assets/tsumiki.model.json` },
+    { name: 'Nito',       cls: 'CUBISM_v2', url: `${WIDG}nito/assets/nito.model.json`       },
+    // Additional Cubism 2 widgets verified loadable
+    { name: 'Chitose',    cls: 'CUBISM_v2', url: `${WIDG}chitose/assets/chitose.model.json`            },
+    { name: 'Epsilon2.1', cls: 'CUBISM_v2', url: `${WIDG}epsilon2_1/assets/Epsilon2.1.model.json`      },
+    { name: 'GF',         cls: 'CUBISM_v2', url: `${WIDG}gf/assets/Gantzert_Felixander.model.json`     },
+    { name: 'Haru01',     cls: 'CUBISM_v2', url: `${WIDG}haru01/assets/haru01.model.json`              },
+    { name: 'Haru02',     cls: 'CUBISM_v2', url: `${WIDG}haru02/assets/haru02.model.json`              },
+    { name: 'Ni-J',       cls: 'CUBISM_v2', url: `${WIDG}ni-j/assets/ni-j.model.json`                  },
+    { name: 'Nietzsche',  cls: 'CUBISM_v2', url: `${WIDG}nietzsche/assets/nietzche.model.json`         },
+    { name: 'Nipsilon',   cls: 'CUBISM_v2', url: `${WIDG}nipsilon/assets/nipsilon.model.json`          },
+    { name: 'UnityChan',  cls: 'CUBISM_v2', url: `${WIDG}unitychan/assets/unitychan.model.json`        },
+    { name: 'Umaru',      cls: 'CUBISM_v2', url: `${WIDG}umaru/assets/umaru.model.json`                },
+    // Community model dump (imuncle/live2d — generic demo characters)
+    { name: 'Pio',        cls: 'CUBISM_v2', url: 'https://cdn.jsdelivr.net/gh/imuncle/live2d@master/model/Pio/model.json'                  },
+    { name: 'Terisa',     cls: 'CUBISM_v2', url: 'https://cdn.jsdelivr.net/gh/imuncle/live2d@master/model/Terisa/model.json'               },
+    { name: 'Alice',      cls: 'CUBISM_v2', url: 'https://cdn.jsdelivr.net/gh/imuncle/live2d@master/model/Alice/model.json'                },
+    { name: 'Fox',        cls: 'CUBISM_v2', url: 'https://cdn.jsdelivr.net/gh/imuncle/live2d@master/model/fox/model.json'                  },
+    { name: 'Iio',        cls: 'CUBISM_v2', url: 'https://cdn.jsdelivr.net/gh/imuncle/live2d@master/model/iio/iio.model.json'              },
+    { name: 'ChiakiKitty',cls: 'CUBISM_v2', url: 'https://cdn.jsdelivr.net/gh/imuncle/live2d@master/model/chiaki_kitty/chiaki_kitty.model.json' },
+    { name: 'Date16',     cls: 'CUBISM_v2', url: 'https://cdn.jsdelivr.net/gh/imuncle/live2d@master/model/date_16/date_16.model.json'      },
+    { name: 'Hallo16',    cls: 'CUBISM_v2', url: 'https://cdn.jsdelivr.net/gh/imuncle/live2d@master/model/hallo_16/hallo_16.model.json'    },
+    { name: 'Katou01',    cls: 'CUBISM_v2', url: 'https://cdn.jsdelivr.net/gh/imuncle/live2d@master/model/katou_01/katou_01.model.json'    },
   ];
 
-  const pick = models[Math.floor(Math.random() * models.length)];
+  // Avoid showing the same character twice in a row across reloads.
+  let lastName = null;
+  try { lastName = localStorage.getItem('lastWaifu'); } catch (_) {}
+  const candidates = (lastName && models.length > 1)
+    ? models.filter(m => m.name !== lastName)
+    : models;
+  const pick = candidates[Math.floor(Math.random() * candidates.length)];
+  try { localStorage.setItem('lastWaifu', pick.name); } catch (_) {}
   document.getElementById('tName').textContent = pick.name.toUpperCase();
   document.querySelector('#pTR .row:nth-child(3) .v').textContent = pick.cls;
   document.getElementById('tId').textContent =
