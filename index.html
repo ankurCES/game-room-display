@@ -210,6 +210,60 @@
   }
   .panel.fill { flex: 1 1 0; min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
   .panel.fill #log { flex: 1 1 0; height: auto; }
+
+  /* ----- LANDSCAPE: compact everything so 4 panels fit shorter columns ----- */
+  @media (orientation: landscape) {
+    .col {
+      width: clamp(210px, 19vw, 290px);
+      top: 12px; bottom: 12px; gap: 8px;
+    }
+    .col.left  { left: 12px; }
+    .col.right { right: 12px; }
+    .panel { padding: 9px 13px; font-size: 11px; line-height: 1.42; }
+    .panel .head { font-size: 10px; letter-spacing: 2px; margin-bottom: 6px; padding-bottom: 5px; }
+    .panel .head .dot { width: 6px; height: 6px; }
+    .row { line-height: 1.5; }
+    .bar { height: 6px; }
+    /* HEALTH compact */
+    .heart-row { gap: 10px; margin-top: 4px; }
+    .heart { width: 22px; height: 22px; }
+    .bpm-num { font-size: 19px; }
+    .bpm-lbl { font-size: 8px; letter-spacing: 1.5px; }
+    .ecg-wrap { height: 36px; margin-top: 6px; }
+    .voice-eq { height: 28px; gap: 2px; padding: 3px; margin-top: 4px; }
+    /* TELEMETRY compact */
+    .spark-wrap { height: 36px; }
+    .spectrum   { height: 36px; padding: 3px; gap: 2px; }
+    .gauge { width: 56px; height: 56px; }
+    .gauge .num { font-size: 13px; }
+    /* PSYCHE/RING compact */
+    .sun-wrap { width: 78%; margin: 4px auto 2px; }
+    .sun-num { font-size: 17px; }
+    .sun-lbl, .sun-unit { font-size: 8px; }
+    .ring-row .gauge { width: 44px !important; height: 44px !important; }
+    .ring-row .gauge .num { font-size: 9px !important; }
+    .ring .lbl { font-size: 8px; }
+    /* LOG compact */
+    #log { font-size: 10px; line-height: 1.4; }
+    #log .line .ts { margin-right: 6px; }
+    /* CTRL compact */
+    #cycle { padding: 6px 12px; font-size: 11px; margin-top: 6px; letter-spacing: 1.5px; }
+    /* tags + reticle */
+    .tag { font-size: 8px; letter-spacing: 2px; }
+    #reticle { width: 50vh; height: 70vh; }
+  }
+  /* very short landscape (e.g. tablets in landscape, ≤ 720px tall) */
+  @media (orientation: landscape) and (max-height: 720px) {
+    .col { width: clamp(190px, 17vw, 250px); gap: 6px; }
+    .panel { padding: 7px 11px; font-size: 10px; }
+    .panel .head { font-size: 9px; margin-bottom: 4px; padding-bottom: 4px; }
+    .ecg-wrap, .voice-eq, .spark-wrap, .spectrum { height: 28px; }
+    .gauge { width: 48px; height: 48px; }
+    .gauge .num { font-size: 11px; }
+    .sun-wrap { width: 65%; }
+    .heart { width: 18px; height: 18px; }
+    .bpm-num { font-size: 16px; }
+  }
   .panel .head {
     font-family: var(--font-disp);
     font-weight: 700;
