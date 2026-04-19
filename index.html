@@ -107,6 +107,13 @@
     animation: float 7s ease-in-out infinite;
     pointer-events: none;
   }
+  /* invisible click overlay sized to character — sits below panels, above bg */
+  #charHit {
+    position: fixed; z-index: 5;
+    background: transparent;
+    cursor: pointer;
+    animation: float 7s ease-in-out infinite;
+  }
   @keyframes float {
     0%, 100% { transform: translate3d(0, 0, 0); }
     25%      { transform: translate3d(-4px, -10px, 0); }
@@ -691,6 +698,7 @@
 <div id="stars"></div>
 
 <canvas id="canvas"></canvas>
+<div id="charHit"></div>
 
 <div id="reticle">
   <div class="corner tl"></div>
@@ -1720,6 +1728,7 @@
     const Live2DModel = PIXI.live2d.Live2DModel;
     const model = await Live2DModel.from(pick.url, { autoInteract: true });
     app.stage.addChild(model);
+    const hitEl = document.getElementById('charHit');
     const fit = () => {
       const baseW = model.internalModel.width  || model.width  || 1;
       const baseH = model.internalModel.height || model.height || 1;
@@ -1728,14 +1737,29 @@
       model.scale.set(scale);
       model.x = (window.innerWidth  - baseW * scale) / 2;
       model.y = (window.innerHeight - baseH * scale) / 2;
+      if (hitEl) {
+        hitEl.style.left   = model.x + 'px';
+        hitEl.style.top    = model.y + 'px';
+        hitEl.style.width  = (baseW * scale) + 'px';
+        hitEl.style.height = (baseH * scale) + 'px';
+      }
     };
     fit();
     window.addEventListener('resize', fit);
-    model.on('hit', (areas) => {
-      if (areas.includes('Body'))      model.motion('TapBody');
-      else if (areas.includes('Head')) model.expression();
-      pushLog({ lvl: 'ok', msg: 'tap_detected: ' + (areas[0] || 'unknown').toLowerCase() });
-    });
+
+    if (hitEl) {
+      hitEl.addEventListener('click', (e) => {
+        const rect = hitEl.getBoundingClientRect();
+        const relY = (e.clientY - rect.top) / rect.height;
+        if (relY < 0.35) {
+          try { model.expression(); } catch (_) {}
+          pushLog({ lvl: 'ok', msg: 'tap_detected: head' });
+        } else {
+          try { model.motion('TapBody'); } catch (_) {}
+          pushLog({ lvl: 'ok', msg: 'tap_detected: body' });
+        }
+      });
+    }
     return model;
   }
 
