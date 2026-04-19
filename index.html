@@ -367,20 +367,35 @@
 
 <script>
   /* -----------------------  CONFIG  ----------------------- */
-  const BASE = 'https://cdn.jsdelivr.net/gh/Live2D/CubismWebSamples@master/Samples/Resources';
+  const CUB4 = 'https://cdn.jsdelivr.net/gh/Live2D/CubismWebSamples@master/Samples/Resources';
+  const WIDG = 'https://cdn.jsdelivr.net/npm/live2d-widget-model-';
   const models = [
-    { name: 'Hiyori', dir: 'Hiyori' },
-    { name: 'Haru',   dir: 'Haru'   },
-    { name: 'Mao',    dir: 'Mao'    },
-    { name: 'Mark',   dir: 'Mark'   },
-    { name: 'Natori', dir: 'Natori' },
-    { name: 'Ren',    dir: 'Ren'    },
-    { name: 'Rice',   dir: 'Rice'   },
-    { name: 'Wanko',  dir: 'Wanko'  },
+    // Live2D Inc. official Cubism 4 samples (Ren omitted — moc3 v06 unsupported by current Cubism Core)
+    { name: 'Hiyori',  cls: 'CUBISM_v4', url: `${CUB4}/Hiyori/Hiyori.model3.json` },
+    { name: 'Haru',    cls: 'CUBISM_v4', url: `${CUB4}/Haru/Haru.model3.json`     },
+    { name: 'Mao',     cls: 'CUBISM_v4', url: `${CUB4}/Mao/Mao.model3.json`       },
+    { name: 'Mark',    cls: 'CUBISM_v4', url: `${CUB4}/Mark/Mark.model3.json`     },
+    { name: 'Natori',  cls: 'CUBISM_v4', url: `${CUB4}/Natori/Natori.model3.json` },
+    { name: 'Rice',    cls: 'CUBISM_v4', url: `${CUB4}/Rice/Rice.model3.json`     },
+    { name: 'Wanko',   cls: 'CUBISM_v4', url: `${CUB4}/Wanko/Wanko.model3.json`   },
+    // Cubism 2 widget models (xiazeyu/live2d-widget-models — public sample assets)
+    { name: 'Shizuku', cls: 'CUBISM_v2', url: `${WIDG}shizuku/assets/shizuku.model.json` },
+    { name: 'Z16',     cls: 'CUBISM_v2', url: `${WIDG}z16/assets/z16.model.json`         },
+    { name: 'Koharu',  cls: 'CUBISM_v2', url: `${WIDG}koharu/assets/koharu.model.json`   },
+    { name: 'Haruto',  cls: 'CUBISM_v2', url: `${WIDG}haruto/assets/haruto.model.json`   },
+    { name: 'Tororo',  cls: 'CUBISM_v2', url: `${WIDG}tororo/assets/tororo.model.json`   },
+    { name: 'Hijiki',  cls: 'CUBISM_v2', url: `${WIDG}hijiki/assets/hijiki.model.json`   },
+    { name: 'Miku',    cls: 'CUBISM_v2', url: `${WIDG}miku/assets/miku.model.json`       },
+    { name: 'Nico',    cls: 'CUBISM_v2', url: `${WIDG}nico/assets/nico.model.json`       },
+    { name: 'Hibiki',  cls: 'CUBISM_v2', url: `${WIDG}hibiki/assets/hibiki.model.json`   },
+    { name: 'Izumi',   cls: 'CUBISM_v2', url: `${WIDG}izumi/assets/izumi.model.json`     },
+    { name: 'Tsumiki', cls: 'CUBISM_v2', url: `${WIDG}tsumiki/assets/tsumiki.model.json` },
+    { name: 'Nito',    cls: 'CUBISM_v2', url: `${WIDG}nito/assets/nito.model.json`       },
   ];
 
   const pick = models[Math.floor(Math.random() * models.length)];
   document.getElementById('tName').textContent = pick.name.toUpperCase();
+  document.querySelector('#pTR .row:nth-child(3) .v').textContent = pick.cls;
   document.getElementById('tId').textContent =
     '0x' + (Math.random()*0xffffffff|0).toString(16).toUpperCase().padStart(8,'0').replace(/^(.{4})/, '$1.');
   document.getElementById('coord').textContent =
@@ -489,13 +504,15 @@
 
   (async () => {
     try {
-      setBoot(15, 0);
+      setBoot(10, 0);
       await loadScript('https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js');
-      setBoot(35, 1);
+      setBoot(25, 0);
+      await loadScript('https://cdn.jsdelivr.net/gh/dylanNew/live2d/webgl/Live2D/lib/live2d.min.js');
+      setBoot(45, 1);
       await loadScript('https://cdn.jsdelivr.net/npm/pixi.js@6.5.10/dist/browser/pixi.min.js');
-      setBoot(55, 2);
-      await loadScript('https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/cubism4.min.js');
-      setBoot(70, 3);
+      setBoot(60, 2);
+      await loadScript('https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/index.min.js');
+      setBoot(75, 3);
 
       if (!window.PIXI || !PIXI.live2d || !PIXI.live2d.Live2DModel) {
         return fail('runtime registration failed');
@@ -510,9 +527,7 @@
       });
 
       const Live2DModel = PIXI.live2d.Live2DModel;
-      const url = `${BASE}/${pick.dir}/${pick.dir}.model3.json`;
-
-      const model = await Live2DModel.from(url, { autoInteract: true });
+      const model = await Live2DModel.from(pick.url, { autoInteract: true });
       app.stage.addChild(model);
       setBoot(90, 4);
 
