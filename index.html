@@ -526,6 +526,170 @@
   #tagTop { top: 6px; left: 50%; transform: translateX(-50%); }
   #tagBot { bottom: 6px; left: 50%; transform: translateX(-50%); }
 
+  /* GOVEE smart-home control */
+  .govee-trigger {
+    position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+    z-index: 25;
+    padding: 14px 22px;
+    background: rgba(20, 60, 100, 0.7);
+    border: 1px solid var(--c-cyan);
+    color: var(--c-cyan);
+    font-family: var(--font-mono); font-size: 13px;
+    letter-spacing: 2.5px;
+    cursor: pointer; border-radius: 4px;
+    text-shadow: 0 0 6px var(--c-cyan-dim);
+    box-shadow: 0 0 16px var(--c-cyan-faint), inset 0 0 12px var(--c-cyan-faint);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    min-height: 48px;
+  }
+  .govee-trigger:hover { background: var(--c-cyan-faint); color: #fff; }
+  .govee-trigger.hidden, .govee-panel.hidden { display: none; }
+
+  .govee-panel {
+    position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+    z-index: 25;
+    width: clamp(320px, 38vw, 460px);
+    background: var(--c-panel);
+    border: 1px solid var(--c-panel-edge);
+    backdrop-filter: blur(10px) saturate(140%);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+    padding: 14px 18px;
+    font-family: var(--font-mono); font-size: 12px;
+    color: #cce8f5;
+    clip-path: polygon(0 8px, 8px 0, calc(100% - 16px) 0, 100% 16px,
+                       100% calc(100% - 8px), calc(100% - 8px) 100%,
+                       16px 100%, 0 calc(100% - 16px));
+    box-shadow: 0 0 28px rgba(0,0,0,0.5), inset 0 0 24px rgba(77,217,255,0.06);
+  }
+  .govee-panel .ghead {
+    font-family: var(--font-disp); font-weight: 700;
+    font-size: 11px; letter-spacing: 2.5px;
+    color: var(--c-cyan); text-shadow: 0 0 8px var(--c-cyan-dim);
+    margin-bottom: 10px; padding-bottom: 6px;
+    border-bottom: 1px dashed var(--c-cyan-faint);
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  }
+  .govee-panel .gactions { display: flex; gap: 6px; }
+  .govee-panel .gactions button {
+    background: transparent; border: 1px solid var(--c-cyan-faint);
+    color: var(--c-cyan-dim); padding: 6px 10px;
+    font-family: var(--font-mono); font-size: 12px; cursor: pointer;
+    border-radius: 3px; min-width: 36px; min-height: 32px;
+  }
+  .govee-panel .gactions button:hover { color: var(--c-cyan); border-color: var(--c-cyan); }
+  .govee-row { margin-bottom: 12px; }
+  #goveeRoom {
+    width: 100%;
+    background: rgba(0,0,0,0.4);
+    color: var(--c-cyan);
+    border: 1px solid var(--c-cyan-faint);
+    font-family: var(--font-mono); font-size: 14px;
+    padding: 12px 14px;
+    cursor: pointer; border-radius: 4px;
+    text-shadow: 0 0 4px var(--c-cyan-dim);
+    min-height: 48px;
+    appearance: none; -webkit-appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, var(--c-cyan) 50%),
+                      linear-gradient(135deg, var(--c-cyan) 50%, transparent 50%);
+    background-position: calc(100% - 18px) center, calc(100% - 12px) center;
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
+  }
+  #goveeRoom:focus { outline: 1px solid var(--c-cyan); }
+
+  .power-row { display: flex; gap: 10px; margin-bottom: 12px; }
+  .btn-power {
+    flex: 1;
+    font-family: var(--font-disp); font-weight: 700;
+    font-size: 16px; letter-spacing: 3px;
+    padding: 16px 22px;
+    border: 2px solid;
+    background: rgba(0,0,0,0.3);
+    cursor: pointer; border-radius: 4px;
+    min-height: 56px;
+    transition: all 0.15s;
+    text-shadow: 0 0 6px currentColor;
+  }
+  .btn-power.on  { border-color: var(--c-green); color: var(--c-green); box-shadow: 0 0 12px rgba(108,255,179,0.3), inset 0 0 12px rgba(108,255,179,0.1); }
+  .btn-power.on:hover  { background: rgba(108,255,179,0.18); }
+  .btn-power.off { border-color: var(--c-red);   color: var(--c-red);   box-shadow: 0 0 12px rgba(255,85,119,0.3), inset 0 0 12px rgba(255,85,119,0.1); }
+  .btn-power.off:hover { background: rgba(255,85,119,0.18); }
+  .btn-power:active { transform: translateY(1px); }
+  .btn-power[disabled] { opacity: 0.4; cursor: not-allowed; }
+
+  .govee-chat {
+    height: 100px; overflow-y: auto;
+    background: rgba(0,0,0,0.45);
+    border: 1px solid var(--c-cyan-faint);
+    padding: 8px 10px;
+    font-size: 11px; line-height: 1.55;
+    color: rgba(204, 232, 245, 0.85);
+  }
+  .govee-chat .gline { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .govee-chat .gline .ts { color: var(--c-cyan-dim); margin-right: 6px; }
+  .govee-chat .gline .prefix { color: var(--c-cyan); margin-right: 4px; }
+  .govee-chat .gline.ok   .msg { color: var(--c-green); }
+  .govee-chat .gline.warn .msg { color: var(--c-amber); }
+  .govee-chat .gline.err  .msg { color: var(--c-red); }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(2, 6, 15, 0.78);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal-overlay.hidden { display: none; }
+  .modal-content {
+    background: var(--c-panel);
+    border: 1px solid var(--c-cyan);
+    padding: 24px 28px;
+    max-width: 460px; width: 90vw;
+    font-family: var(--font-mono);
+    color: #cce8f5;
+    box-shadow: 0 0 40px rgba(77, 217, 255, 0.4);
+    clip-path: polygon(0 12px, 12px 0, calc(100% - 20px) 0, 100% 20px,
+                       100% calc(100% - 12px), calc(100% - 12px) 100%,
+                       20px 100%, 0 calc(100% - 20px));
+  }
+  .modal-content h2 {
+    font-family: var(--font-disp); font-weight: 700;
+    font-size: 16px; letter-spacing: 4px;
+    color: var(--c-cyan); text-shadow: 0 0 10px var(--c-cyan);
+    margin: 0 0 18px;
+  }
+  .modal-content input {
+    width: 100%; box-sizing: border-box;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid var(--c-cyan-faint);
+    color: var(--c-cyan);
+    font-family: var(--font-mono); font-size: 14px;
+    padding: 14px 16px; margin-bottom: 14px;
+    text-shadow: 0 0 4px var(--c-cyan-dim);
+    letter-spacing: 1px; min-height: 48px;
+    border-radius: 3px;
+  }
+  .modal-content input:focus { outline: 1px solid var(--c-cyan); }
+  .modal-actions { display: flex; gap: 10px; margin-bottom: 12px; }
+  .modal-actions button {
+    flex: 1;
+    padding: 14px 18px;
+    font-family: var(--font-mono); font-size: 13px; letter-spacing: 2px;
+    background: transparent;
+    border: 1px solid var(--c-cyan);
+    color: var(--c-cyan); cursor: pointer;
+    text-shadow: 0 0 6px var(--c-cyan-dim);
+    border-radius: 3px; min-height: 48px;
+  }
+  .modal-actions button:hover { background: var(--c-cyan-faint); color: #fff; }
+  .modal-actions button.secondary { border-color: var(--c-cyan-faint); color: var(--c-cyan-dim); }
+  .modal-help {
+    font-size: 11px; color: var(--c-cyan-dim);
+    line-height: 1.5; opacity: 0.85;
+  }
+
   /* error fallback */
   #fail {
     position: fixed; left: 50%; top: 50%;
@@ -676,6 +840,41 @@
     <button id="cycle" onclick="location.reload()">↻ CYCLE_TARGET</button>
   </div>
 </div><!-- /.col.right -->
+
+<button id="goveeTrigger" class="govee-trigger hidden">⚡ SET GOVEE KEY</button>
+
+<div class="govee-panel hidden" id="goveePanel">
+  <div class="ghead">
+    SMART HOME // GOVEE LINK
+    <div class="gactions">
+      <button id="goveeRefresh" title="Refresh devices">↻</button>
+      <button id="goveeKeyEdit" title="Reset API key">⚙</button>
+    </div>
+  </div>
+  <div class="govee-row">
+    <select id="goveeRoom"><option>—</option></select>
+  </div>
+  <div class="power-row">
+    <button class="btn-power on"  id="goveeOn">⚡ ON</button>
+    <button class="btn-power off" id="goveeOff">○ OFF</button>
+  </div>
+  <div class="govee-chat" id="goveeChat"></div>
+</div>
+
+<div class="modal-overlay hidden" id="goveeModal">
+  <div class="modal-content">
+    <h2>GOVEE LINK // CONFIGURE</h2>
+    <input id="goveeKeyInput" type="password" placeholder="Enter API key (32-char UUID)" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" />
+    <div class="modal-actions">
+      <button id="goveeKeySave">SAVE</button>
+      <button id="goveeKeyCancel" class="secondary">CANCEL</button>
+    </div>
+    <div class="modal-help">
+      Get a key from the Govee Home app → Profile → Settings → "Apply for API Key".
+      Stored only in your browser (localStorage); never transmitted elsewhere.
+    </div>
+  </div>
+</div>
 
 <div id="boot">
   <div class="boot-stage" id="stg1">
@@ -1597,6 +1796,170 @@
     });
     return model;
   }
+
+  /* -----------------------  GOVEE SMART HOME  ----------------------- */
+  (() => {
+    const GOVEE_BASE = 'https://openapi.api.govee.com';
+    const KEY_STORE  = 'goveeApiKey';
+    const ROOM_STORE = 'goveeSelectedRoom';
+    const $ = (id) => document.getElementById(id);
+
+    const trigger = $('goveeTrigger');
+    const panel   = $('goveePanel');
+    const modal   = $('goveeModal');
+    const keyIn   = $('goveeKeyInput');
+    const select  = $('goveeRoom');
+    const btnOn   = $('goveeOn');
+    const btnOff  = $('goveeOff');
+    const chatEl  = $('goveeChat');
+
+    const onMsg = [
+      'Let there be light', 'Photons engaged', 'Lumen flow active',
+      'Sun mode: enabled', 'Pixels are happy now',
+      'Soul.sys requests illumination', 'Brightness++',
+      'Vision restored', 'Solar core online'
+    ];
+    const offMsg = [
+      'Night mode: activated', 'Bedtime for the photons',
+      'Eclipse mode initiated', 'Lights out, dreams on',
+      'Stealth mode online', 'Embrace the dark side',
+      'Photons taking five', 'Brightness--', 'Cosmic blackout'
+    ];
+    const errMsg = [
+      'That tickled. Try again?', 'Connection lost in the void',
+      'Govee says no, but politely', 'Network gremlins detected'
+    ];
+    const pick = (a) => a[Math.random() * a.length | 0];
+
+    const getKey  = () => { try { return localStorage.getItem(KEY_STORE); } catch(_) { return null; } };
+    const setKey  = (k) => { try { localStorage.setItem(KEY_STORE, k); } catch(_) {} };
+    const clrKey  = () => { try { localStorage.removeItem(KEY_STORE); } catch(_) {} };
+    const getRoom = () => { try { return localStorage.getItem(ROOM_STORE); } catch(_) { return null; } };
+    const setRoom = (d) => { try { localStorage.setItem(ROOM_STORE, d); } catch(_) {} };
+
+    function chat(prefix, msg, lvl) {
+      const div = document.createElement('div');
+      div.className = 'gline ' + (lvl || '');
+      const t = new Date();
+      const ts = [t.getHours(), t.getMinutes(), t.getSeconds()].map(n => String(n).padStart(2,'0')).join(':');
+      div.innerHTML = `<span class="ts">[${ts}]</span><span class="prefix">${prefix}</span><span class="msg">${msg}</span>`;
+      chatEl.appendChild(div);
+      while (chatEl.children.length > 30) chatEl.removeChild(chatEl.firstChild);
+      chatEl.scrollTop = chatEl.scrollHeight;
+    }
+
+    async function listDevices(key) {
+      const r = await fetch(`${GOVEE_BASE}/router/api/v1/user/devices`, {
+        headers: { 'Govee-API-Key': key }
+      });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const j = await r.json();
+      return j.data || [];
+    }
+
+    async function controlDevice(key, sku, device, value) {
+      const requestId = (crypto.randomUUID && crypto.randomUUID()) ||
+                        `req-${Date.now()}-${Math.random().toString(16).slice(2,10)}`;
+      const r = await fetch(`${GOVEE_BASE}/router/api/v1/device/control`, {
+        method: 'POST',
+        headers: { 'Govee-API-Key': key, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          requestId,
+          payload: {
+            sku, device,
+            capability: { type: 'devices.capabilities.on_off', instance: 'powerSwitch', value }
+          }
+        })
+      });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    }
+
+    async function loadDevices() {
+      const key = getKey();
+      if (!key) return;
+      chat('GET', 'fetching device list…');
+      try {
+        const all = await listDevices(key);
+        const lights = all.filter(d => d.type === 'devices.types.light' ||
+          (d.capabilities||[]).some(c => c.type === 'devices.capabilities.on_off'));
+        select.innerHTML = '';
+        if (!lights.length) {
+          select.innerHTML = '<option>— no devices —</option>';
+          chat('!!!', 'no controllable devices found', 'warn');
+          return;
+        }
+        lights.forEach(d => {
+          const opt = document.createElement('option');
+          opt.value = d.device + '|' + d.sku;
+          opt.textContent = d.deviceName || d.device;
+          select.appendChild(opt);
+        });
+        const last = getRoom();
+        if (last && [...select.options].some(o => o.value === last)) select.value = last;
+        chat('OK ', `linked ${lights.length} device${lights.length>1?'s':''}`, 'ok');
+      } catch (e) {
+        chat('ERR', `${e.message} — check API key or CORS`, 'err');
+      }
+    }
+
+    async function power(value) {
+      const key = getKey();
+      if (!key) return;
+      const sel = select.value;
+      if (!sel || sel.startsWith('—')) { chat('!!!', 'pick a room first', 'warn'); return; }
+      const [device, sku] = sel.split('|');
+      btnOn.disabled = btnOff.disabled = true;
+      try {
+        await controlDevice(key, sku, device, value);
+        chat(value === 1 ? '>>>' : '<<<', pick(value === 1 ? onMsg : offMsg), 'ok');
+      } catch (e) {
+        chat('ERR', `${pick(errMsg)} (${e.message})`, 'err');
+      } finally {
+        btnOn.disabled = btnOff.disabled = false;
+      }
+    }
+
+    function showState() {
+      const has = !!getKey();
+      trigger.classList.toggle('hidden', has);
+      panel.classList.toggle('hidden', !has);
+    }
+
+    function openModal() {
+      keyIn.value = getKey() || '';
+      modal.classList.remove('hidden');
+      setTimeout(() => keyIn.focus(), 100);
+    }
+
+    trigger.addEventListener('click', openModal);
+    $('goveeKeyEdit').addEventListener('click', openModal);
+    $('goveeKeySave').addEventListener('click', () => {
+      const k = keyIn.value.trim();
+      if (!k) {
+        clrKey(); modal.classList.add('hidden'); showState();
+        chat('!!!', 'Govee link disconnected', 'warn');
+        return;
+      }
+      setKey(k);
+      modal.classList.add('hidden');
+      showState();
+      chat('OK ', 'API key stored locally', 'ok');
+      loadDevices();
+    });
+    $('goveeKeyCancel').addEventListener('click', () => modal.classList.add('hidden'));
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
+    $('goveeRefresh').addEventListener('click', loadDevices);
+    select.addEventListener('change', () => setRoom(select.value));
+    btnOn.addEventListener('click',  () => power(1));
+    btnOff.addEventListener('click', () => power(0));
+
+    showState();
+    if (getKey()) {
+      chat('OK ', 'soul-link to Govee online', 'ok');
+      loadDevices();
+    }
+  })();
 
   /* -----------------------  MAIN  ----------------------- */
   (async () => {
