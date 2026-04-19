@@ -15,6 +15,9 @@
     --c-green: #6cffb3;
     --c-amber: #ffb347;
     --c-red: #ff5577;
+    --c-red-dim: rgba(255, 85, 119, 0.55);
+    --c-magenta: #c97dff;
+    --c-magenta-dim: rgba(201, 125, 255, 0.55);
     --c-bg-0: #02060f;
     --c-bg-1: #061226;
     --c-panel: rgba(6, 18, 38, 0.55);
@@ -97,10 +100,17 @@
   }
   @keyframes twinkle { from { opacity: 0.55; } to { opacity: 1; } }
 
-  /* canvas for live2d */
+  /* canvas for live2d — gentle float in digital space */
   #canvas {
     position: fixed; inset: 0; z-index: 3; display: block;
     width: 100vw; height: 100vh;
+    animation: float 7s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    25%      { transform: translate3d(-4px, -10px, 0); }
+    50%      { transform: translate3d(0, -16px, 0); }
+    75%      { transform: translate3d(4px, -10px, 0); }
   }
 
   /* scanlines overlay */
@@ -225,12 +235,15 @@
     transition: width 0.3s;
   }
 
-  #pTL { top: 20px; left: 20px; }
-  #pTR { top: 20px; right: 20px; }
-  #pML { top: 50%; left: 20px; transform: translateY(-50%); width: 250px; }
-  #pMR { top: 50%; right: 20px; transform: translateY(-50%); width: 250px; }
-  #pBL { bottom: 20px; left: 20px; max-width: 320px; }
-  #pBR { bottom: 20px; right: 20px; }
+  /* portrait stack: 4 panels per side, fixed offsets */
+  #pTL { top: 20px;  left: 20px;  width: 270px; }
+  #pHL { top: 270px; left: 20px;  width: 270px; }
+  #pML { top: 580px; left: 20px;  width: 270px; }
+  #pBL { bottom: 20px; left: 20px; width: 270px; }
+  #pTR { top: 20px;  right: 20px; width: 270px; }
+  #pHR { top: 270px; right: 20px; width: 270px; }
+  #pMR { top: 580px; right: 20px; width: 270px; }
+  #pBR { bottom: 20px; right: 20px; width: 270px; }
 
   /* TELEMETRY widgets */
   .spark-wrap { display: block; width: 100%; height: 50px; margin-top: 4px;
@@ -257,6 +270,64 @@
   .ring-row { display: flex; gap: 8px; justify-content: space-around; margin-top: 4px; }
   .ring { text-align: center; flex: 1; }
   .ring .lbl { font-size: 9px; letter-spacing: 1.5px; color: var(--c-cyan-dim); margin-top: 2px; }
+
+  /* HEALTH widgets */
+  .heart-row { display: flex; align-items: center; gap: 14px; margin-top: 6px; }
+  .heart {
+    width: 30px; height: 30px;
+    fill: var(--c-red);
+    filter: drop-shadow(0 0 10px var(--c-red));
+    animation: heartbeat 0.83s ease-in-out infinite;
+  }
+  @keyframes heartbeat {
+    0%, 60%, 100% { transform: scale(1); }
+    10%           { transform: scale(1.20); }
+    20%           { transform: scale(1); }
+    30%           { transform: scale(1.10); }
+    40%           { transform: scale(1); }
+  }
+  .bpm-block { line-height: 1; }
+  .bpm-num {
+    font-family: var(--font-disp); font-weight: 700;
+    font-size: 26px; color: var(--c-red);
+    text-shadow: 0 0 10px var(--c-red);
+  }
+  .bpm-lbl { font-size: 9px; letter-spacing: 2px; color: var(--c-red-dim); margin-top: 4px; }
+  .ecg-wrap {
+    display: block; width: 100%; height: 50px; margin-top: 8px;
+    background: rgba(40, 0, 12, 0.35);
+    border: 1px solid rgba(255, 85, 119, 0.3);
+  }
+  .voice-eq {
+    display: flex; align-items: flex-end; gap: 3px; height: 38px;
+    margin-top: 6px; padding: 4px;
+    background: rgba(40, 0, 12, 0.35); border: 1px solid rgba(255, 85, 119, 0.3);
+  }
+  .voice-eq span {
+    flex: 1; min-height: 4px;
+    background: linear-gradient(to top, var(--c-red), var(--c-amber));
+    box-shadow: 0 0 4px var(--c-red-dim);
+    transition: height 0.07s;
+  }
+
+  /* SUNBURST widget */
+  .sun-wrap {
+    position: relative; width: 100%; aspect-ratio: 1; margin: 8px auto 0;
+  }
+  .sun-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .sun-center {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 2px;
+    pointer-events: none;
+  }
+  .sun-num {
+    font-family: var(--font-disp); font-weight: 700;
+    font-size: 20px; color: var(--c-magenta);
+    text-shadow: 0 0 10px var(--c-magenta);
+  }
+  .sun-lbl { font-size: 9px; letter-spacing: 2.5px; color: var(--c-magenta-dim); }
+  .sun-unit { font-size: 8px; letter-spacing: 1.5px; color: var(--c-magenta-dim); }
 
   #log {
     height: 100px; overflow: hidden;
@@ -286,35 +357,99 @@
   #cycle:hover { background: var(--c-cyan-faint); color: #fff; box-shadow: 0 0 16px var(--c-cyan); }
   #cycle:active { transform: translateY(1px); }
 
-  /* boot screen */
+  /* CINEMATIC BOOT */
   #boot {
-    position: fixed; inset: 0; z-index: 20;
-    background: var(--c-bg-0);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 18px;
-    transition: opacity 0.6s;
+    position: fixed; inset: 0; z-index: 100;
+    background:
+      radial-gradient(ellipse at center, rgba(20, 0, 40, 0.55) 0%, var(--c-bg-0) 75%),
+      var(--c-bg-0);
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity 1.0s ease;
+    overflow: hidden;
   }
   #boot.hidden { opacity: 0; pointer-events: none; }
-  #boot .title {
-    font-family: var(--font-disp); font-weight: 700;
-    font-size: 28px; letter-spacing: 8px;
-    color: var(--c-cyan);
-    text-shadow: 0 0 12px var(--c-cyan);
+  #boot::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(to bottom,
+      rgba(255,255,255,0.025) 0 1px, transparent 1px 3px);
   }
-  #boot .sub { color: var(--c-cyan-dim); font-size: 13px; letter-spacing: 3px; }
-  #boot .progress {
-    width: 280px; height: 4px;
+  #boot::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.55) 100%);
+  }
+  .boot-stage {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 22px;
+    opacity: 0;
+    transition: opacity 0.9s ease;
+    pointer-events: none;
+  }
+  .boot-stage.active { opacity: 1; }
+  .boot-title {
+    font-family: var(--font-disp); font-weight: 700;
+    font-size: 38px; letter-spacing: 10px;
+    color: var(--c-cyan);
+    text-shadow: 0 0 20px var(--c-cyan), 0 0 40px var(--c-cyan-dim);
+    text-align: center;
+  }
+  .boot-title.red {
+    color: var(--c-red);
+    text-shadow: 0 0 20px var(--c-red), 0 0 40px var(--c-red-dim);
+  }
+  .boot-title.green {
+    color: var(--c-green);
+    text-shadow: 0 0 20px var(--c-green), 0 0 40px rgba(108,255,179,0.5);
+  }
+  .boot-title.magenta {
+    color: var(--c-magenta);
+    text-shadow: 0 0 20px var(--c-magenta), 0 0 40px var(--c-magenta-dim);
+  }
+  .boot-sub {
+    font-family: var(--font-mono); font-size: 13px;
+    color: var(--c-cyan-dim); letter-spacing: 4px; text-align: center;
+  }
+  .boot-canvas {
+    width: 480px; height: 480px;
+    max-width: 80vw; max-height: 55vh;
+    image-rendering: crisp-edges;
+  }
+  .boot-canvas.wide {
+    width: 600px; height: 200px;
+    max-width: 92vw;
+  }
+  .boot-term {
+    width: 520px; max-width: 88vw;
+    height: 240px; overflow: hidden;
+    font-family: var(--font-mono); font-size: 13px;
+    background: rgba(0,0,0,0.55);
+    border: 1px solid var(--c-cyan-faint);
+    padding: 14px 18px;
+    text-align: left;
+    line-height: 1.6;
+    box-shadow: inset 0 0 20px rgba(77,217,255,0.06);
+  }
+  .boot-term .l-ok   { color: var(--c-green); text-shadow: 0 0 4px var(--c-green); }
+  .boot-term .l-info { color: var(--c-cyan);  text-shadow: 0 0 4px var(--c-cyan-dim); }
+  .boot-term .l-warn { color: var(--c-amber); text-shadow: 0 0 4px var(--c-amber); }
+  .boot-term .l-err  { color: var(--c-red);   text-shadow: 0 0 4px var(--c-red); }
+  .boot-progress {
+    width: 320px; height: 3px;
     background: rgba(77,217,255,0.1);
     border: 1px solid var(--c-cyan-faint);
-    overflow: hidden;
-    margin-top: 12px;
   }
-  #boot .progress > span {
+  .boot-progress > span {
     display: block; height: 100%; width: 0%;
     background: linear-gradient(90deg, var(--c-cyan), var(--c-green));
     box-shadow: 0 0 10px var(--c-cyan);
     transition: width 0.4s;
+  }
+  .boot-heart {
+    width: 220px; height: 220px;
+    fill: var(--c-red);
+    filter: drop-shadow(0 0 30px var(--c-red)) drop-shadow(0 0 60px var(--c-red-dim));
+    animation: heartbeat 0.83s ease-in-out infinite;
   }
 
   /* corner tags */
@@ -385,6 +520,40 @@
   <div class="row"><span class="k">ORIGIN</span><span class="v">CUBISM/SAMPLES</span></div>
 </div>
 
+<div class="panel" id="pHL">
+  <div class="head" style="color:var(--c-red);text-shadow:0 0 8px var(--c-red);border-bottom-color:rgba(255,85,119,0.3)">HEALTH//VITALS <span class="dot" style="background:var(--c-red);box-shadow:0 0 8px var(--c-red)"></span></div>
+  <div class="heart-row">
+    <svg class="heart" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+    </svg>
+    <div class="bpm-block">
+      <div><span class="bpm-num" id="bpmNum">72</span> <span class="bpm-lbl">BPM</span></div>
+      <div class="bpm-lbl" style="margin-top:6px">SINUS RHYTHM // STABLE</div>
+    </div>
+  </div>
+  <div class="row" style="margin-top:8px"><span class="k">ECG // LEAD II</span></div>
+  <canvas id="ecg" class="ecg-wrap"></canvas>
+  <div class="row" style="margin-top:6px"><span class="k">VOICE.AMP</span></div>
+  <div class="voice-eq" id="voiceEq"></div>
+  <div class="row" style="margin-top:6px"><span class="k">O₂ SAT</span><span class="v" style="color:var(--c-red);text-shadow:0 0 6px var(--c-red-dim)" id="o2">98%</span></div>
+  <div class="row"><span class="k">BP</span><span class="v" style="color:var(--c-red);text-shadow:0 0 6px var(--c-red-dim)" id="bp">118 / 76</span></div>
+</div>
+
+<div class="panel" id="pHR">
+  <div class="head" style="color:var(--c-magenta);text-shadow:0 0 8px var(--c-magenta);border-bottom-color:rgba(201,125,255,0.3)">PSYCHE//SPECTRUM <span class="dot" style="background:var(--c-magenta);box-shadow:0 0 8px var(--c-magenta)"></span></div>
+  <div class="sun-wrap">
+    <canvas id="sunburst"></canvas>
+    <div class="sun-center">
+      <div class="sun-num" id="sunNum">432</div>
+      <div class="sun-unit">Hz</div>
+      <div class="sun-lbl">SOUL_FREQ</div>
+    </div>
+  </div>
+  <div class="row"><span class="k">RESONANCE</span><span class="v" style="color:var(--c-magenta);text-shadow:0 0 6px var(--c-magenta-dim)" id="resVal">θ-7.4</span></div>
+  <div class="row"><span class="k">COHERENCE</span><span class="v"><span class="bar" style="border-color:var(--c-magenta-dim)"><span id="bCoh" style="background:linear-gradient(90deg,var(--c-magenta),#ff8eff);box-shadow:0 0 6px var(--c-magenta-dim);width:74%"></span></span></span></div>
+  <div class="row"><span class="k">ENTROPY</span><span class="v" style="color:var(--c-magenta);text-shadow:0 0 6px var(--c-magenta-dim)" id="entVal">0.42</span></div>
+</div>
+
 <div class="panel" id="pML">
   <div class="head">TELEMETRY <span class="dot"></span></div>
   <div class="row"><span class="k">NEURAL.OSC</span></div>
@@ -449,10 +618,50 @@
 </div>
 
 <div id="boot">
-  <div class="title">SOUL.SYS</div>
-  <div class="sub">INITIALIZING NEURAL LINK</div>
-  <div class="progress"><span id="bootBar"></span></div>
-  <div class="sub" id="bootStep">// BOOT</div>
+  <div class="boot-stage" id="stg1">
+    <div class="boot-title">SOUL.SYS</div>
+    <div class="boot-sub">CORE BOOT SEQUENCE INITIATED</div>
+    <div class="boot-term" id="bootTerm"></div>
+    <div class="boot-progress"><span id="bootBar"></span></div>
+  </div>
+
+  <div class="boot-stage" id="stg2">
+    <div class="boot-title green" style="font-size:32px">DECODING GENETIC SIGNATURE</div>
+    <canvas class="boot-canvas" id="dnaCv"></canvas>
+    <div class="boot-sub">23 CHROMOSOME PAIRS // ACGT SEQUENCING</div>
+  </div>
+
+  <div class="boot-stage" id="stg3">
+    <div class="boot-title" style="font-size:32px">GENERATING SOUL ENVELOPE</div>
+    <canvas class="boot-canvas" id="cloneCv"></canvas>
+    <div class="boot-sub">CELLULAR REPLICATION // MITOSIS PHASE</div>
+  </div>
+
+  <div class="boot-stage" id="stg4">
+    <div class="boot-title" style="font-size:32px">NEURAL CORTEX ACTIVATION</div>
+    <canvas class="boot-canvas" id="aiCv"></canvas>
+    <div class="boot-sub">1.4×10⁹ SYNAPSES // ESTABLISHING TOPOLOGY</div>
+  </div>
+
+  <div class="boot-stage" id="stg5">
+    <div class="boot-title magenta" style="font-size:32px">PSYCHE CALIBRATION</div>
+    <canvas class="boot-canvas" id="bootSunCv"></canvas>
+    <div class="boot-sub">FREQUENCY LOCK // 432 Hz // RESONANT</div>
+  </div>
+
+  <div class="boot-stage" id="stg6">
+    <div class="boot-title red" style="font-size:32px">VITAL SIGNS DETECTED</div>
+    <svg class="boot-heart" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+    </svg>
+    <canvas class="boot-canvas wide" id="bootEcgCv"></canvas>
+    <div class="boot-sub" style="color:var(--c-red-dim)">SINUS RHYTHM // 72 BPM // STABLE</div>
+  </div>
+
+  <div class="boot-stage" id="stg7">
+    <div class="boot-title green">LINK ESTABLISHED</div>
+    <div class="boot-sub" style="color:rgba(108,255,179,0.7)">SOUL ACQUISITION COMPLETE // INITIATING DISPLAY</div>
+  </div>
 </div>
 
 <div id="fail"></div>
@@ -545,34 +754,37 @@
   }
   requestAnimationFrame(tickFps);
 
-  /* -----------------------  MATRIX RAIN  ----------------------- */
+  /* -----------------------  MATRIX RAIN (fixed canvas, no resize)  ----------------------- */
   (() => {
     const cv = document.getElementById('fxMatrix');
     const ctx = cv.getContext('2d');
-    let cols, drops, charSize = 16;
+    const charSize = 16;
+    cv.width = innerWidth; cv.height = innerHeight;
+    const cols = Math.ceil(cv.width / charSize);
+    const drops = new Array(cols).fill(0).map(() => ({
+      y: Math.random() * -cv.height / charSize,
+      speed: 0.7 + Math.random() * 0.8,
+      sway: Math.random() * Math.PI * 2,
+    }));
     const glyphs = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
-    function size() {
-      cv.width = innerWidth; cv.height = innerHeight;
-      cols = Math.ceil(cv.width / charSize);
-      drops = new Array(cols).fill(0).map(() => Math.random() * -cv.height / charSize);
-    }
-    size();
-    addEventListener('resize', size);
     ctx.font = charSize + "px 'Share Tech Mono', monospace";
-    let last = 0;
+    let last = 0, gt = 0;
     function frame(t) {
-      if (t - last > 60) {
-        last = t;
+      if (t - last > 55) {
+        last = t; gt += 0.04;
         ctx.fillStyle = 'rgba(2, 6, 15, 0.12)';
         ctx.fillRect(0, 0, cv.width, cv.height);
         for (let i = 0; i < cols; i++) {
+          const d = drops[i];
           const ch = glyphs[(Math.random() * glyphs.length) | 0];
-          const x = i * charSize, y = drops[i] * charSize;
+          const swayPx = Math.sin(gt + d.sway + i * 0.07) * 4;
+          const x = i * charSize + swayPx;
+          const y = d.y * charSize;
           if (Math.random() < 0.012) ctx.fillStyle = 'rgba(255,255,255,0.95)';
           else ctx.fillStyle = `rgba(108, 255, 179, ${0.5 + Math.random() * 0.4})`;
           ctx.fillText(ch, x, y);
-          drops[i]++;
-          if (y > cv.height && Math.random() > 0.972) drops[i] = 0;
+          d.y += d.speed;
+          if (y > cv.height && Math.random() > 0.972) d.y = 0;
         }
       }
       requestAnimationFrame(frame);
@@ -580,59 +792,58 @@
     requestAnimationFrame(frame);
   })();
 
-  /* -----------------------  NEURAL MESH (force-directed)  ----------------------- */
+  /* -----------------------  NEURAL MESH (fixed canvas, flow-field current)  ----------------------- */
   (() => {
     const cv = document.getElementById('fxMesh');
     const ctx = cv.getContext('2d');
-    const N = 48;
-    const LINK_DIST2 = 28000;
-    const REP_DIST2 = 6000;
+    const N = 56;
+    const LINK_DIST2 = 30000;
+    const REP_DIST2 = 6500;
+    cv.width = innerWidth; cv.height = innerHeight;
     let nodes = [];
-    function size() {
-      cv.width = innerWidth; cv.height = innerHeight;
+    for (let i = 0; i < N; i++) {
+      nodes.push({
+        x: Math.random() * cv.width,
+        y: Math.random() * cv.height,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        ph: Math.random() * Math.PI * 2,
+      });
     }
-    function init() {
-      nodes = [];
-      for (let i = 0; i < N; i++) {
-        nodes.push({
-          x: Math.random() * cv.width,
-          y: Math.random() * cv.height,
-          vx: (Math.random() - 0.5) * 0.4,
-          vy: (Math.random() - 0.5) * 0.4,
-          ph: Math.random() * Math.PI * 2,
-        });
-      }
-    }
-    size(); init();
-    addEventListener('resize', () => { size(); init(); });
 
     let edgeCount = 0;
+    let gt = 0;
     function frame() {
       const w = cv.width, h = cv.height;
+      gt += 0.008;
       ctx.clearRect(0, 0, w, h);
-      // physics
+      // physics with flow field — gives "swimming" feel
       for (let i = 0; i < N; i++) {
         const n = nodes[i];
+        // flow field: curl-noise-ish using sin/cos
+        const fx = Math.sin(n.y * 0.0035 + gt * 1.1) * 0.06
+                 + Math.cos(n.x * 0.0024 - gt * 0.7) * 0.04;
+        const fy = Math.cos(n.x * 0.0035 + gt * 0.9) * 0.06
+                 + Math.sin(n.y * 0.0024 + gt * 0.6) * 0.04;
+        n.vx += fx; n.vy += fy;
         n.x += n.vx; n.y += n.vy;
-        if (n.x < 0)  { n.x = 0;  n.vx *= -1; }
-        if (n.x > w)  { n.x = w;  n.vx *= -1; }
-        if (n.y < 0)  { n.y = 0;  n.vy *= -1; }
-        if (n.y > h)  { n.y = h;  n.vy *= -1; }
+        // wrap edges so it feels infinite, not bouncing
+        if (n.x < -10) n.x = w + 10;
+        if (n.x > w + 10) n.x = -10;
+        if (n.y < -10) n.y = h + 10;
+        if (n.y > h + 10) n.y = -10;
         n.ph += 0.025;
         for (let j = i + 1; j < N; j++) {
           const m = nodes[j];
           const dx = m.x - n.x, dy = m.y - n.y;
           const d2 = dx*dx + dy*dy;
           if (d2 < REP_DIST2 && d2 > 1) {
-            const f = (REP_DIST2 - d2) / REP_DIST2 * 0.0006;
+            const f = (REP_DIST2 - d2) / REP_DIST2 * 0.0005;
             n.vx -= dx * f; n.vy -= dy * f;
             m.vx += dx * f; m.vy += dy * f;
           }
         }
-        n.vx *= 0.992; n.vy *= 0.992;
-        // tiny random jitter
-        n.vx += (Math.random() - 0.5) * 0.02;
-        n.vy += (Math.random() - 0.5) * 0.02;
+        n.vx *= 0.985; n.vy *= 0.985;
       }
       // edges
       let edges = 0;
@@ -771,6 +982,143 @@
     }, 250);
   })();
 
+  /* -----------------------  ECG WAVEFORM  ----------------------- */
+  function ecgValueAt(t) {
+    const phase = ((t * 1.20) % 1 + 1) % 1; // ~72 BPM at t-step 0.018
+    if (phase < 0.10) return 0;
+    if (phase < 0.13) return Math.sin((phase - 0.10) / 0.03 * Math.PI) * 0.10;
+    if (phase < 0.18) return 0;
+    if (phase < 0.20) return -((phase - 0.18) / 0.02) * 0.20;
+    if (phase < 0.22) return -0.20 + ((phase - 0.20) / 0.02) * 1.50;
+    if (phase < 0.24) return 1.30 - ((phase - 0.22) / 0.02) * 1.65;
+    if (phase < 0.26) return -0.35 + ((phase - 0.24) / 0.02) * 0.35;
+    if (phase < 0.34) return 0;
+    if (phase < 0.45) return Math.sin((phase - 0.34) / 0.11 * Math.PI) * 0.18;
+    return 0;
+  }
+  (() => {
+    const cv = document.getElementById('ecg');
+    const ctx = cv.getContext('2d');
+    const r = cv.getBoundingClientRect();
+    cv.width = r.width || 240; cv.height = r.height || 50;
+    const SAMPLES = 180;
+    const buf = new Array(SAMPLES).fill(0.5);
+    let t = 0;
+    function frame() {
+      t += 0.018;
+      buf.shift(); buf.push(0.5 - ecgValueAt(t) * 0.40);
+      const w = cv.width, h = cv.height;
+      ctx.fillStyle = 'rgba(40, 0, 12, 0.18)';
+      ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = 'rgba(255, 85, 119, 0.10)'; ctx.lineWidth = 1;
+      for (let i = 0; i < 3; i++) {
+        const y = (i + 1) * h / 4;
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+      ctx.strokeStyle = 'rgba(255, 85, 119, 1)';
+      ctx.shadowColor = '#ff5577'; ctx.shadowBlur = 6; ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      for (let i = 0; i < SAMPLES; i++) {
+        const x = i / (SAMPLES - 1) * w;
+        const y = buf[i] * h;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  })();
+
+  /* -----------------------  VOICE EQ BARS  ----------------------- */
+  (() => {
+    const host = document.getElementById('voiceEq');
+    const N = 9, bars = [];
+    for (let i = 0; i < N; i++) {
+      const b = document.createElement('span');
+      host.appendChild(b);
+      bars.push({ el: b, ph: Math.random() * Math.PI * 2 });
+    }
+    let t = 0;
+    setInterval(() => {
+      t += 0.22;
+      for (let i = 0; i < N; i++) {
+        const v = 0.45
+          + Math.abs(Math.sin(t + bars[i].ph + i * 0.45)) * 0.55
+          + (Math.random() - 0.5) * 0.18;
+        const pct = Math.max(10, Math.min(100, v * 100));
+        bars[i].el.style.height = pct.toFixed(0) + '%';
+      }
+    }, 75);
+  })();
+
+  /* -----------------------  HEALTH VITALS JITTER  ----------------------- */
+  (() => {
+    const bpmEl = document.getElementById('bpmNum');
+    const o2El = document.getElementById('o2');
+    const bpEl = document.getElementById('bp');
+    setInterval(() => {
+      bpmEl.textContent = String(70 + (Math.random() * 6 | 0));
+      o2El.textContent = String(96 + (Math.random() * 4 | 0)) + '%';
+      const sys = 114 + (Math.random() * 8 | 0);
+      const dia = 72 + (Math.random() * 6 | 0);
+      bpEl.textContent = sys + ' / ' + dia;
+    }, 2200);
+  })();
+
+  /* -----------------------  PSYCHE SUNBURST  ----------------------- */
+  (() => {
+    const cv = document.getElementById('sunburst');
+    const ctx = cv.getContext('2d');
+    function size() {
+      const r = cv.getBoundingClientRect();
+      cv.width = r.width * 2; cv.height = r.height * 2; // hidpi
+      ctx.scale(2, 2);
+    }
+    size();
+    const N = 56;
+    const bars = [];
+    for (let i = 0; i < N; i++) bars.push({ ph: Math.random() * Math.PI * 2, h: 0.5 });
+    let t = 0;
+    function frame() {
+      t += 0.05;
+      const w = cv.width / 2, h = cv.height / 2;
+      const cx = w / 2, cy = h / 2;
+      const innerR = Math.min(w, h) * 0.20;
+      const maxR = Math.min(w, h) * 0.46;
+      ctx.clearRect(0, 0, w, h);
+      ctx.lineCap = 'round';
+      for (let i = 0; i < N; i++) {
+        const angle = (i / N) * Math.PI * 2 - Math.PI / 2;
+        const target = 0.4 + (Math.sin(t + bars[i].ph * 0.6 + i * 0.22) * 0.5 + 0.5) * 0.6 + Math.random() * 0.12;
+        bars[i].h += (target - bars[i].h) * 0.18;
+        const len = innerR + (maxR - innerR) * bars[i].h;
+        const x1 = cx + Math.cos(angle) * innerR;
+        const y1 = cy + Math.sin(angle) * innerR;
+        const x2 = cx + Math.cos(angle) * len;
+        const y2 = cy + Math.sin(angle) * len;
+        const hue = (270 + (i / N) * 90 + t * 15) % 360;
+        ctx.strokeStyle = `hsla(${hue}, 88%, 68%, 0.85)`;
+        ctx.lineWidth = 2.2;
+        ctx.shadowColor = ctx.strokeStyle; ctx.shadowBlur = 5;
+        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+      }
+      ctx.shadowBlur = 0;
+      ctx.strokeStyle = 'rgba(201, 125, 255, 0.5)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(cx, cy, innerR - 4, 0, Math.PI * 2); ctx.stroke();
+      ctx.strokeStyle = 'rgba(201, 125, 255, 0.18)';
+      ctx.beginPath(); ctx.arc(cx, cy, maxR + 4, 0, Math.PI * 2); ctx.stroke();
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+    setInterval(() => {
+      document.getElementById('sunNum').textContent = String(420 + (Math.random() * 30 | 0));
+      document.getElementById('resVal').textContent = ['α-9.2','β-13.8','γ-42.1','θ-7.4','δ-2.1'][Math.random()*5|0];
+      document.getElementById('entVal').textContent = (Math.random() * 0.9).toFixed(2);
+      document.getElementById('bCoh').style.width = (60 + Math.random() * 35 | 0) + '%';
+    }, 1700);
+  })();
+
   // log stream
   const logEl = document.getElementById('log');
   const logTemplates = [
@@ -800,24 +1148,8 @@
     pushLog(logTemplates[Math.random() * logTemplates.length | 0]);
   }, 1800);
 
-  /* -----------------------  BOOT SEQUENCE  ----------------------- */
-  const bootBar = document.getElementById('bootBar');
-  const bootStep = document.getElementById('bootStep');
-  const bootSteps = [
-    '// LOADING CUBISM CORE',
-    '// LOADING PIXI RENDERER',
-    '// LOADING SOUL ADAPTER',
-    '// FETCHING TARGET',
-    '// CALIBRATING',
-    '// LINK ESTABLISHED',
-  ];
-  let bootIdx = 0;
-  function setBoot(pct, idx) {
-    bootBar.style.width = pct + '%';
-    if (idx != null) bootStep.textContent = bootSteps[idx] || bootSteps[bootSteps.length-1];
-  }
-
-  /* -----------------------  SCRIPT LOAD  ----------------------- */
+  /* -----------------------  HELPERS  ----------------------- */
+  const delay = (ms) => new Promise(r => setTimeout(r, ms));
   const fail = (msg) => {
     const el = document.getElementById('fail');
     el.textContent = '// FATAL: ' + msg;
@@ -825,7 +1157,6 @@
     document.getElementById('boot').classList.add('hidden');
     console.error(msg);
   };
-
   function loadScript(src) {
     return new Promise((resolve, reject) => {
       const s = document.createElement('script');
@@ -835,63 +1166,360 @@
       document.head.appendChild(s);
     });
   }
+  function showStage(id) {
+    document.querySelectorAll('.boot-stage').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
 
+  /* -----------------------  CINEMATIC BOOT STAGES  ----------------------- */
+  async function stage1Terminal(ms) {
+    showStage('stg1');
+    const term = document.getElementById('bootTerm');
+    const bar  = document.getElementById('bootBar');
+    const lines = [
+      { t: 'BIOS v5.1.0 — SOUL.SYS BOOT MANAGER', c: 'l-info' },
+      { t: '[  OK  ] Initialized neural kernel /dev/cortex0', c: 'l-ok' },
+      { t: '[  OK  ] Mounted /sys/cubism on read-write', c: 'l-ok' },
+      { t: '[  OK  ] Started Live2D Display Adapter', c: 'l-ok' },
+      { t: '[  OK  ] Loaded Cubism Core 5.1.0 (83951616)', c: 'l-ok' },
+      { t: '[  OK  ] PIXI WebGL2 renderer online', c: 'l-ok' },
+      { t: '[ INFO ] Detected 19 character signatures', c: 'l-info' },
+      { t: '[ WARN ] Quantum entanglement unstable, recalibrating', c: 'l-warn' },
+      { t: '[  OK  ] Quantum entanglement stable @ 99.974%', c: 'l-ok' },
+      { t: '[  OK  ] Soul interface bound to GPU', c: 'l-ok' },
+      { t: '[  OK  ] Neural mesh: 56 nodes initialized', c: 'l-ok' },
+      { t: '[  OK  ] All systems nominal — proceeding', c: 'l-ok' },
+    ];
+    let i = 0;
+    const step = ms / (lines.length + 2);
+    const intv = setInterval(() => {
+      if (i >= lines.length) return;
+      const div = document.createElement('div');
+      div.className = lines[i].c;
+      div.textContent = lines[i].t;
+      term.appendChild(div);
+      if (term.children.length > 9) term.removeChild(term.firstChild);
+      bar.style.width = (((i + 1) / lines.length) * 100).toFixed(0) + '%';
+      i++;
+    }, step);
+    await delay(ms);
+    clearInterval(intv);
+  }
+
+  async function stage2DNA(ms) {
+    showStage('stg2');
+    const cv = document.getElementById('dnaCv');
+    const ctx = cv.getContext('2d');
+    cv.width = cv.height = 480;
+    let t = 0, stop = false;
+    function frame() {
+      if (stop) return;
+      t += 0.025;
+      ctx.fillStyle = 'rgba(2, 6, 15, 0.20)';
+      ctx.fillRect(0, 0, 480, 480);
+      const cx = 240, n = 50;
+      const yStart = 30, yEnd = 450;
+      const items = [];
+      for (let i = 0; i < n; i++) {
+        const y = yStart + (yEnd - yStart) * (i / (n - 1));
+        const phase = i * 0.32 + t;
+        const x1 = cx + Math.cos(phase) * 110;
+        const x2 = cx - Math.cos(phase) * 110;
+        const z1 = Math.sin(phase);
+        const z2 = -Math.sin(phase);
+        items.push({ x: x1, y, z: z1, side: 0 });
+        items.push({ x: x2, y, z: z2, side: 1 });
+        const a = 0.25 + Math.abs(z1) * 0.3;
+        ctx.strokeStyle = `rgba(180, 255, 220, ${a})`;
+        ctx.lineWidth = 1.4;
+        ctx.beginPath(); ctx.moveTo(x1, y); ctx.lineTo(x2, y); ctx.stroke();
+      }
+      items.sort((a, b) => a.z - b.z);
+      for (const it of items) {
+        const a = 0.45 + it.z * 0.5;
+        const r = 4.5 + it.z * 2.5;
+        const col = it.side ? '108, 255, 179' : '77, 217, 255';
+        ctx.fillStyle = `rgba(${col}, ${Math.max(0.1, a)})`;
+        ctx.shadowColor = `rgba(${col}, 0.8)`; ctx.shadowBlur = 8;
+        ctx.beginPath(); ctx.arc(it.x, it.y, Math.max(1, r), 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.shadowBlur = 0;
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+    await delay(ms);
+    stop = true;
+  }
+
+  async function stage3Clone(ms) {
+    showStage('stg3');
+    const cv = document.getElementById('cloneCv');
+    const ctx = cv.getContext('2d');
+    cv.width = cv.height = 480;
+    const cells = [{ x: 240, y: 240, r: 70, t: 0, ph: 0 }];
+    let stop = false;
+    function frame() {
+      if (stop) return;
+      ctx.fillStyle = 'rgba(2, 6, 15, 0.18)';
+      ctx.fillRect(0, 0, 480, 480);
+      for (let i = cells.length - 1; i >= 0; i--) {
+        const c = cells[i];
+        c.t += 0.016; c.ph += 0.05;
+        if (c.t > 1.6 && cells.length < 14) {
+          const d = c.r * 1.4;
+          const a = Math.random() * Math.PI * 2;
+          const dx = Math.cos(a) * d, dy = Math.sin(a) * d;
+          cells.splice(i, 1,
+            { x: c.x + dx * 0.5, y: c.y + dy * 0.5, r: c.r * 0.78, t: 0, ph: 0 },
+            { x: c.x - dx * 0.5, y: c.y - dy * 0.5, r: c.r * 0.78, t: 0, ph: 0 }
+          );
+          continue;
+        }
+      }
+      for (const c of cells) {
+        const pulse = 1 + Math.sin(c.ph) * 0.06;
+        const r = c.r * pulse;
+        const grad = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, r);
+        grad.addColorStop(0, 'rgba(77, 217, 255, 0.18)');
+        grad.addColorStop(1, 'rgba(77, 217, 255, 0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath(); ctx.arc(c.x, c.y, r, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = 'rgba(77, 217, 255, 0.7)';
+        ctx.lineWidth = 1.5;
+        ctx.shadowColor = 'rgba(77, 217, 255, 0.6)'; ctx.shadowBlur = 10;
+        ctx.beginPath(); ctx.arc(c.x, c.y, r, 0, Math.PI * 2); ctx.stroke();
+        ctx.shadowBlur = 0;
+        const nr = c.r * 0.30;
+        ctx.fillStyle = 'rgba(255, 100, 200, 0.75)';
+        ctx.shadowColor = 'rgba(255, 100, 200, 0.7)'; ctx.shadowBlur = 6;
+        ctx.beginPath(); ctx.arc(c.x, c.y, nr, 0, Math.PI * 2); ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = 'rgba(255, 220, 240, 0.9)';
+        ctx.beginPath(); ctx.arc(c.x - nr * 0.3, c.y - nr * 0.3, nr * 0.4, 0, Math.PI * 2); ctx.fill();
+      }
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+    await delay(ms);
+    stop = true;
+  }
+
+  async function stage4AI(ms) {
+    showStage('stg4');
+    const cv = document.getElementById('aiCv');
+    const ctx = cv.getContext('2d');
+    cv.width = cv.height = 480;
+    const layers = [4, 7, 9, 7, 4];
+    const nodes = [];
+    for (let li = 0; li < layers.length; li++) {
+      for (let ni = 0; ni < layers[li]; ni++) {
+        nodes.push({
+          x: 60 + (480 - 120) * (li / (layers.length - 1)),
+          y: 60 + (480 - 120) * ((ni + 0.5) / layers[li]),
+          layer: li,
+          appear: 0,
+          appearDelay: li * 0.4 + Math.random() * 0.3,
+        });
+      }
+    }
+    const edges = [];
+    for (let li = 0; li < layers.length - 1; li++) {
+      const from = nodes.filter(n => n.layer === li);
+      const to = nodes.filter(n => n.layer === li + 1);
+      for (const a of from) for (const b of to) {
+        edges.push({ a, b, appear: 0, appearDelay: li * 0.5 + 1.0 + Math.random() * 0.5 });
+      }
+    }
+    const pulses = [];
+    let t = 0, lastPulse = 0, stop = false;
+    function frame() {
+      if (stop) return;
+      t += 0.020;
+      if (t > 2.5 && t - lastPulse > 0.12) {
+        lastPulse = t;
+        const e = edges[(Math.random() * edges.length) | 0];
+        if (e && e.appear > 0.5) pulses.push({ edge: e, p: 0 });
+      }
+      ctx.fillStyle = 'rgba(2, 6, 15, 0.22)';
+      ctx.fillRect(0, 0, 480, 480);
+      for (const e of edges) {
+        e.appear = Math.min(1, Math.max(0, t - e.appearDelay));
+        if (e.appear <= 0) continue;
+        ctx.strokeStyle = `rgba(77, 217, 255, ${e.appear * 0.32})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(e.a.x, e.a.y); ctx.lineTo(e.b.x, e.b.y); ctx.stroke();
+      }
+      for (const n of nodes) {
+        n.appear = Math.min(1, Math.max(0, t - n.appearDelay));
+        if (n.appear <= 0) continue;
+        const r = 5 * n.appear;
+        ctx.fillStyle = `rgba(108, 255, 179, ${n.appear * 0.95})`;
+        ctx.shadowColor = 'rgba(108, 255, 179, 0.8)'; ctx.shadowBlur = 8;
+        ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, Math.PI * 2); ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = `rgba(108, 255, 179, ${n.appear * 0.15})`;
+        ctx.beginPath(); ctx.arc(n.x, n.y, r * 3, 0, Math.PI * 2); ctx.fill();
+      }
+      for (let i = pulses.length - 1; i >= 0; i--) {
+        const p = pulses[i];
+        p.p += 0.035;
+        if (p.p > 1) { pulses.splice(i, 1); continue; }
+        const x = p.edge.a.x + (p.edge.b.x - p.edge.a.x) * p.p;
+        const y = p.edge.a.y + (p.edge.b.y - p.edge.a.y) * p.p;
+        ctx.fillStyle = 'rgba(255, 220, 100, 0.95)';
+        ctx.shadowColor = 'rgba(255, 220, 100, 1)'; ctx.shadowBlur = 10;
+        ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI * 2); ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+    await delay(ms);
+    stop = true;
+  }
+
+  async function stage5Sunburst(ms) {
+    showStage('stg5');
+    const cv = document.getElementById('bootSunCv');
+    const ctx = cv.getContext('2d');
+    cv.width = cv.height = 480;
+    const N = 72;
+    const bars = [];
+    for (let i = 0; i < N; i++) bars.push({ ph: Math.random() * Math.PI * 2, h: 0.5 });
+    let t = 0, stop = false;
+    const cx = 240, cy = 240, innerR = 70, maxR = 210;
+    function frame() {
+      if (stop) return;
+      t += 0.05;
+      ctx.clearRect(0, 0, 480, 480);
+      ctx.lineCap = 'round';
+      for (let i = 0; i < N; i++) {
+        const angle = (i / N) * Math.PI * 2 - Math.PI / 2;
+        const target = 0.4 + (Math.sin(t * 1.5 + bars[i].ph * 0.7 + i * 0.18) * 0.5 + 0.5) * 0.6 + Math.random() * 0.10;
+        bars[i].h += (target - bars[i].h) * 0.18;
+        const len = innerR + (maxR - innerR) * bars[i].h;
+        const x1 = cx + Math.cos(angle) * innerR;
+        const y1 = cy + Math.sin(angle) * innerR;
+        const x2 = cx + Math.cos(angle) * len;
+        const y2 = cy + Math.sin(angle) * len;
+        const hue = (270 + (i / N) * 120 + t * 20) % 360;
+        ctx.strokeStyle = `hsla(${hue}, 90%, 65%, 0.88)`;
+        ctx.lineWidth = 4;
+        ctx.shadowColor = ctx.strokeStyle; ctx.shadowBlur = 8;
+        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+      }
+      ctx.shadowBlur = 0;
+      ctx.strokeStyle = 'rgba(201, 125, 255, 0.55)'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(cx, cy, innerR - 5, 0, Math.PI * 2); ctx.stroke();
+      ctx.strokeStyle = 'rgba(201, 125, 255, 0.20)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(cx, cy, maxR + 5, 0, Math.PI * 2); ctx.stroke();
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+    await delay(ms);
+    stop = true;
+  }
+
+  async function stage6Heart(ms) {
+    showStage('stg6');
+    const cv = document.getElementById('bootEcgCv');
+    const ctx = cv.getContext('2d');
+    cv.width = 600; cv.height = 200;
+    const buf = new Array(360).fill(0.5);
+    let t = 0, stop = false;
+    function frame() {
+      if (stop) return;
+      t += 0.022;
+      buf.shift(); buf.push(0.5 - ecgValueAt(t * 1.6) * 0.42);
+      const w = cv.width, h = cv.height;
+      ctx.fillStyle = 'rgba(2, 6, 15, 0.18)';
+      ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = 'rgba(255, 85, 119, 0.10)'; ctx.lineWidth = 1;
+      for (let i = 0; i < 5; i++) {
+        const y = (i + 1) * h / 6;
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+      ctx.strokeStyle = 'rgba(255, 85, 119, 1)';
+      ctx.shadowColor = '#ff5577'; ctx.shadowBlur = 10;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (let i = 0; i < buf.length; i++) {
+        const x = i / (buf.length - 1) * w;
+        const y = buf[i] * h;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+    await delay(ms);
+    stop = true;
+  }
+
+  async function stage7Final(ms) {
+    showStage('stg7');
+    await delay(ms);
+  }
+
+  async function runIntro() {
+    await stage1Terminal(4500);
+    await stage2DNA(5000);
+    await stage3Clone(5000);
+    await stage4AI(5500);
+    await stage5Sunburst(4500);
+    await stage6Heart(4500);
+    await stage7Final(2500);
+  }
+
+  /* -----------------------  MODEL LOADER  ----------------------- */
+  async function loadModelInBackground() {
+    await loadScript('https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js');
+    await loadScript('https://cdn.jsdelivr.net/gh/dylanNew/live2d/webgl/Live2D/lib/live2d.min.js');
+    await loadScript('https://cdn.jsdelivr.net/npm/pixi.js@6.5.10/dist/browser/pixi.min.js');
+    await loadScript('https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/index.min.js');
+    if (!window.PIXI || !PIXI.live2d || !PIXI.live2d.Live2DModel) {
+      throw new Error('runtime registration failed');
+    }
+    const app = new PIXI.Application({
+      view: document.getElementById('canvas'),
+      autoStart: true,
+      resizeTo: window,
+      backgroundAlpha: 0,
+      antialias: true,
+    });
+    const Live2DModel = PIXI.live2d.Live2DModel;
+    const model = await Live2DModel.from(pick.url, { autoInteract: true });
+    app.stage.addChild(model);
+    const fit = () => {
+      const baseW = model.internalModel.width  || model.width  || 1;
+      const baseH = model.internalModel.height || model.height || 1;
+      const margin = 0.85;
+      const scale = Math.min(window.innerWidth / baseW, window.innerHeight / baseH) * margin;
+      model.scale.set(scale);
+      model.x = (window.innerWidth  - baseW * scale) / 2;
+      model.y = (window.innerHeight - baseH * scale) / 2;
+    };
+    fit();
+    window.addEventListener('resize', fit);
+    model.on('hit', (areas) => {
+      if (areas.includes('Body'))      model.motion('TapBody');
+      else if (areas.includes('Head')) model.expression();
+      pushLog({ lvl: 'ok', msg: 'tap_detected: ' + (areas[0] || 'unknown').toLowerCase() });
+    });
+    return model;
+  }
+
+  /* -----------------------  MAIN  ----------------------- */
   (async () => {
     try {
-      setBoot(10, 0);
-      await loadScript('https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js');
-      setBoot(25, 0);
-      await loadScript('https://cdn.jsdelivr.net/gh/dylanNew/live2d/webgl/Live2D/lib/live2d.min.js');
-      setBoot(45, 1);
-      await loadScript('https://cdn.jsdelivr.net/npm/pixi.js@6.5.10/dist/browser/pixi.min.js');
-      setBoot(60, 2);
-      await loadScript('https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/index.min.js');
-      setBoot(75, 3);
-
-      if (!window.PIXI || !PIXI.live2d || !PIXI.live2d.Live2DModel) {
-        return fail('runtime registration failed');
-      }
-
-      const app = new PIXI.Application({
-        view: document.getElementById('canvas'),
-        autoStart: true,
-        resizeTo: window,
-        backgroundAlpha: 0,
-        antialias: true,
-      });
-
-      const Live2DModel = PIXI.live2d.Live2DModel;
-      const model = await Live2DModel.from(pick.url, { autoInteract: true });
-      app.stage.addChild(model);
-      setBoot(90, 4);
-
-      const fit = () => {
-        const baseW = model.internalModel.width  || model.width  || 1;
-        const baseH = model.internalModel.height || model.height || 1;
-        const margin = 0.85;
-        const scale = Math.min(
-          window.innerWidth  / baseW,
-          window.innerHeight / baseH
-        ) * margin;
-        model.scale.set(scale);
-        model.x = (window.innerWidth  - baseW * scale) / 2;
-        model.y = (window.innerHeight - baseH * scale) / 2;
-      };
-      fit();
-      window.addEventListener('resize', fit);
-
-      model.on('hit', (areas) => {
-        if (areas.includes('Body'))      model.motion('TapBody');
-        else if (areas.includes('Head')) model.expression();
-        pushLog({ lvl: 'ok', msg: 'tap_detected: ' + (areas[0] || 'unknown').toLowerCase() });
-      });
-
+      const [_, model] = await Promise.all([runIntro(), loadModelInBackground()]);
       pushLog({ lvl: 'ok', msg: 'target_acquired: ' + pick.name.toUpperCase() });
-      setBoot(100, 5);
+      document.getElementById('boot').classList.add('hidden');
       setTimeout(() => {
-        document.getElementById('boot').classList.add('hidden');
-        setTimeout(() => document.getElementById('boot').remove(), 700);
-      }, 350);
+        const b = document.getElementById('boot');
+        if (b) b.remove();
+      }, 1100);
     } catch (err) {
       fail((err && err.message) ? err.message : String(err));
     }
