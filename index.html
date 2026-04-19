@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Random Waifu</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: #fff;
+    background: #0a0014;
+  }
+  #bg {
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 30%, rgba(120, 60, 200, 0.45) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 70%, rgba(255, 80, 160, 0.35) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 100%, rgba(60, 30, 120, 0.6) 0%, transparent 60%),
+      linear-gradient(180deg, #0a0014 0%, #1a002b 60%, #2b0040 100%);
+    z-index: 0;
+  }
+  #stars {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background-image:
+      radial-gradient(1px 1px at 12% 18%, rgba(255,255,255,0.85), transparent),
+      radial-gradient(1px 1px at 27% 62%, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1.5px 1.5px at 45% 25%, rgba(255,255,255,0.9), transparent),
+      radial-gradient(1px 1px at 67% 80%, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1px 1px at 82% 32%, rgba(255,255,255,0.8), transparent),
+      radial-gradient(1.5px 1.5px at 91% 58%, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1px 1px at 5% 78%, rgba(255,255,255,0.55), transparent);
+    animation: twinkle 4s ease-in-out infinite alternate;
+  }
+  @keyframes twinkle {
+    from { opacity: 0.6; }
+    to   { opacity: 1; }
+  }
+  #canvas {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2;
+    display: block;
+  }
+  #info {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    z-index: 3;
+    padding: 12px 18px;
+    background: rgba(20, 0, 35, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 14px;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  #info .label {
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-size: 10px;
+    opacity: 0.6;
+    margin-bottom: 2px;
+  }
+  #info .name {
+    font-size: 20px;
+    font-weight: 600;
+    background: linear-gradient(90deg, #ff9ee0, #c39dff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  #refresh {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 3;
+    padding: 10px 18px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #fff;
+    border-radius: 999px;
+    font-size: 13px;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: background 0.2s, transform 0.2s;
+  }
+  #refresh:hover { background: rgba(255, 255, 255, 0.22); transform: translateY(-1px); }
+  #refresh:active { transform: translateY(0); }
+  #loading {
+    position: fixed;
+    inset: 0;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    letter-spacing: 1px;
+    opacity: 0.85;
+    pointer-events: none;
+    transition: opacity 0.4s;
+  }
+  #loading.hidden { opacity: 0; }
+  .dots::after {
+    content: "";
+    animation: dots 1.4s steps(4, end) infinite;
+  }
+  @keyframes dots {
+    0%   { content: ""; }
+    25%  { content: "."; }
+    50%  { content: ".."; }
+    75%  { content: "..."; }
+  }
+  #credit {
+    position: fixed;
+    bottom: 10px;
+    right: 14px;
+    z-index: 3;
+    font-size: 10px;
+    opacity: 0.45;
+  }
+  #credit a { color: #fff; }
+</style>
+</head>
+<body>
+<div id="bg"></div>
+<div id="stars"></div>
+<canvas id="canvas"></canvas>
+<div id="loading"><span class="dots">summoning a soul</span></div>
+<div id="info">
+  <div class="label">Now appearing</div>
+  <div class="name" id="name">—</div>
+</div>
+<button id="refresh" onclick="location.reload()">↻ New character</button>
+<div id="credit">
+  Models © <a href="https://www.live2d.com/" target="_blank" rel="noopener">Live2D Inc.</a> — Cubism Web Samples
+</div>
+
+<script>
+  const BASE = 'https://cdn.jsdelivr.net/gh/Live2D/CubismWebSamples@master/Samples/Resources';
+  const models = [
+    { name: 'Hiyori', dir: 'Hiyori' },
+    { name: 'Haru',   dir: 'Haru'   },
+    { name: 'Mao',    dir: 'Mao'    },
+    { name: 'Mark',   dir: 'Mark'   },
+    { name: 'Natori', dir: 'Natori' },
+    { name: 'Ren',    dir: 'Ren'    },
+    { name: 'Rice',   dir: 'Rice'   },
+    { name: 'Wanko',  dir: 'Wanko'  },
+  ];
+
+  const pick = models[Math.floor(Math.random() * models.length)];
+  document.getElementById('name').textContent = pick.name;
+
+  const setStatus = (msg) => { document.getElementById('loading').textContent = msg; };
+  const fail = (msg) => {
+    const el = document.getElementById('loading');
+    el.textContent = msg;
+    el.style.color = '#ff8aa6';
+    el.style.opacity = '1';
+    el.classList.remove('dots');
+    console.error(msg);
+  };
+
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = src;
+      s.onload = () => resolve(src);
+      s.onerror = () => reject(new Error('Failed to load ' + src));
+      document.head.appendChild(s);
+    });
+  }
+
+  (async () => {
+    try {
+      await loadScript('https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js');
+      await loadScript('https://cdn.jsdelivr.net/npm/pixi.js@6.5.10/dist/browser/pixi.min.js');
+      await loadScript('https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/cubism4.min.js');
+
+      if (!window.PIXI || !PIXI.live2d || !PIXI.live2d.Live2DModel) {
+        return fail('Live2D runtime did not initialize. PIXI.live2d=' + JSON.stringify(Object.keys(PIXI.live2d || {})));
+      }
+
+      const app = new PIXI.Application({
+        view: document.getElementById('canvas'),
+        autoStart: true,
+        resizeTo: window,
+        backgroundAlpha: 0,
+        antialias: true,
+      });
+
+      const Live2DModel = PIXI.live2d.Live2DModel;
+      const url = `${BASE}/${pick.dir}/${pick.dir}.model3.json`;
+
+      setStatus('loading ' + pick.name + '…');
+      const model = await Live2DModel.from(url, { autoInteract: true });
+      app.stage.addChild(model);
+
+      const fit = () => {
+        const baseW = model.internalModel.width  || model.width  || 1;
+        const baseH = model.internalModel.height || model.height || 1;
+        const margin = 0.92;
+        const scale = Math.min(
+          window.innerWidth  / baseW,
+          window.innerHeight / baseH
+        ) * margin;
+        model.scale.set(scale);
+        model.x = (window.innerWidth  - baseW * scale) / 2;
+        model.y = (window.innerHeight - baseH * scale) / 2;
+      };
+      fit();
+      window.addEventListener('resize', fit);
+
+      model.on('hit', (hitAreas) => {
+        if (hitAreas.includes('Body'))      model.motion('TapBody');
+        else if (hitAreas.includes('Head')) model.expression();
+      });
+
+      const loading = document.getElementById('loading');
+      loading.classList.add('hidden');
+      setTimeout(() => loading.remove(), 500);
+    } catch (err) {
+      fail('Failed to load ' + pick.name + ': ' + (err && err.message ? err.message : err));
+    }
+  })();
+</script>
+</body>
+</html>
