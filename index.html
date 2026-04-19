@@ -353,6 +353,7 @@
   <div class="row"><span class="k">UPTIME</span><span class="v" id="uptime">00:00:00</span></div>
   <div class="row"><span class="k">SECTOR</span><span class="v" id="sector">A7-NORTH</span></div>
   <div class="row"><span class="k">COORD</span><span class="v" id="coord">0xFF44.A8B2</span></div>
+  <div class="row"><span class="k">NEXT_CYCLE</span><span class="v amber" id="nextCycle">03:00</span></div>
   <button id="cycle" onclick="location.reload()">↻ CYCLE_TARGET</button>
 </div>
 
@@ -406,15 +407,31 @@
 
   /* -----------------------  HUD ANIMATIONS  ----------------------- */
   const startTime = Date.now();
+  const CYCLE_MS = 3 * 60 * 1000;
+  const cycleAt = startTime + CYCLE_MS;
   function fmtUptime(ms) {
     const s = (ms / 1000) | 0;
     const h = (s / 3600) | 0, m = ((s % 3600) / 60) | 0, sec = s % 60;
     return [h, m, sec].map(n => String(n).padStart(2, '0')).join(':');
   }
+  function fmtMS(ms) {
+    const s = Math.max(0, (ms / 1000) | 0);
+    const m = (s / 60) | 0, sec = s % 60;
+    return String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
+  }
   setInterval(() => {
-    document.getElementById('uptime').textContent = fmtUptime(Date.now() - startTime);
+    const now = Date.now();
+    document.getElementById('uptime').textContent = fmtUptime(now - startTime);
     document.getElementById('ping').textContent = String(30 + (Math.random()*40|0)).padStart(3,'0');
+    const remain = cycleAt - now;
+    const nc = document.getElementById('nextCycle');
+    nc.textContent = fmtMS(remain);
+    if (remain <= 10000) { nc.classList.remove('amber'); nc.style.color = 'var(--c-red)'; nc.style.textShadow = '0 0 8px var(--c-red)'; }
   }, 1000);
+  setTimeout(() => {
+    pushLog({ lvl: 'warn', msg: 'cycle_timer: rotating target…' });
+    setTimeout(() => location.reload(), 600);
+  }, CYCLE_MS);
 
   // metric jitter
   setInterval(() => {
