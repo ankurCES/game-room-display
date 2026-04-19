@@ -3,151 +3,370 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Random Waifu</title>
+<title>SOUL.SYS // CHARACTER MATRIX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 <style>
+  :root {
+    --c-cyan: #4dd9ff;
+    --c-cyan-dim: rgba(77, 217, 255, 0.55);
+    --c-cyan-faint: rgba(77, 217, 255, 0.18);
+    --c-green: #6cffb3;
+    --c-amber: #ffb347;
+    --c-red: #ff5577;
+    --c-bg-0: #02060f;
+    --c-bg-1: #061226;
+    --c-panel: rgba(6, 18, 38, 0.55);
+    --c-panel-edge: rgba(77, 217, 255, 0.35);
+    --font-mono: 'Share Tech Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --font-disp: 'Orbitron', system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
   html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: hidden;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    color: #fff;
-    background: #0a0014;
+    margin: 0; padding: 0; height: 100%; overflow: hidden;
+    background: var(--c-bg-0);
+    color: var(--c-cyan);
+    font-family: var(--font-mono);
+    cursor: crosshair;
   }
+
+  /* ------- BACKGROUND LAYERS ------- */
   #bg {
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0; z-index: 0;
     background:
-      radial-gradient(ellipse at 20% 30%, rgba(120, 60, 200, 0.45) 0%, transparent 55%),
-      radial-gradient(ellipse at 80% 70%, rgba(255, 80, 160, 0.35) 0%, transparent 55%),
-      radial-gradient(ellipse at 50% 100%, rgba(60, 30, 120, 0.6) 0%, transparent 60%),
-      linear-gradient(180deg, #0a0014 0%, #1a002b 60%, #2b0040 100%);
-    z-index: 0;
+      radial-gradient(ellipse at 50% 100%, rgba(60, 120, 220, 0.25) 0%, transparent 60%),
+      radial-gradient(ellipse at 20% 20%, rgba(120, 60, 200, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 30%, rgba(0, 200, 255, 0.10) 0%, transparent 55%),
+      linear-gradient(180deg, #02060f 0%, #061226 60%, #0a1a36 100%);
   }
+
+  /* perspective grid floor */
+  #grid {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    perspective: 600px;
+    overflow: hidden;
+  }
+  #grid::before {
+    content: "";
+    position: absolute;
+    left: -50%; right: -50%; bottom: -10%;
+    height: 70vh;
+    background-image:
+      linear-gradient(to right, var(--c-cyan-faint) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--c-cyan-faint) 1px, transparent 1px);
+    background-size: 60px 60px;
+    transform: rotateX(60deg) translateY(0);
+    transform-origin: 50% 100%;
+    animation: grid-scroll 8s linear infinite;
+    mask-image: linear-gradient(to top, #000 30%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to top, #000 30%, transparent 100%);
+  }
+  @keyframes grid-scroll {
+    from { background-position: 0 0; }
+    to   { background-position: 0 60px; }
+  }
+
+  /* starfield */
   #stars {
-    position: fixed;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
+    position: fixed; inset: 0; z-index: 2; pointer-events: none;
     background-image:
       radial-gradient(1px 1px at 12% 18%, rgba(255,255,255,0.85), transparent),
-      radial-gradient(1px 1px at 27% 62%, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1px 1px at 27% 62%, rgba(255,255,255,0.6), transparent),
       radial-gradient(1.5px 1.5px at 45% 25%, rgba(255,255,255,0.9), transparent),
-      radial-gradient(1px 1px at 67% 80%, rgba(255,255,255,0.6), transparent),
-      radial-gradient(1px 1px at 82% 32%, rgba(255,255,255,0.8), transparent),
-      radial-gradient(1.5px 1.5px at 91% 58%, rgba(255,255,255,0.7), transparent),
-      radial-gradient(1px 1px at 5% 78%, rgba(255,255,255,0.55), transparent);
+      radial-gradient(1px 1px at 67% 80%, rgba(255,255,255,0.55), transparent),
+      radial-gradient(1px 1px at 82% 32%, rgba(255,255,255,0.75), transparent),
+      radial-gradient(1.5px 1.5px at 91% 58%, rgba(255,255,255,0.65), transparent),
+      radial-gradient(1px 1px at 5% 78%, rgba(255,255,255,0.55), transparent),
+      radial-gradient(1px 1px at 38% 8%, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1px 1px at 60% 45%, rgba(255,255,255,0.5), transparent);
     animation: twinkle 4s ease-in-out infinite alternate;
   }
-  @keyframes twinkle {
-    from { opacity: 0.6; }
-    to   { opacity: 1; }
-  }
+  @keyframes twinkle { from { opacity: 0.55; } to { opacity: 1; } }
+
+  /* canvas for live2d */
   #canvas {
-    position: fixed;
-    inset: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 2;
-    display: block;
+    position: fixed; inset: 0; z-index: 3; display: block;
+    width: 100vw; height: 100vh;
   }
-  #info {
-    position: fixed;
-    bottom: 24px;
-    left: 24px;
-    z-index: 3;
-    padding: 12px 18px;
-    background: rgba(20, 0, 35, 0.55);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 14px;
-    font-size: 14px;
-    line-height: 1.4;
+
+  /* scanlines overlay */
+  #scan {
+    position: fixed; inset: 0; z-index: 6; pointer-events: none;
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.02) 0px,
+        rgba(255,255,255,0.02) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+    mix-blend-mode: overlay;
   }
-  #info .label {
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    font-size: 10px;
-    opacity: 0.6;
-    margin-bottom: 2px;
-  }
-  #info .name {
-    font-size: 20px;
-    font-weight: 600;
-    background: linear-gradient(90deg, #ff9ee0, #c39dff);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-  #refresh {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 3;
-    padding: 10px 18px;
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    color: #fff;
-    border-radius: 999px;
-    font-size: 13px;
-    cursor: pointer;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    transition: background 0.2s, transform 0.2s;
-  }
-  #refresh:hover { background: rgba(255, 255, 255, 0.22); transform: translateY(-1px); }
-  #refresh:active { transform: translateY(0); }
-  #loading {
-    position: fixed;
-    inset: 0;
-    z-index: 4;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    letter-spacing: 1px;
-    opacity: 0.85;
-    pointer-events: none;
-    transition: opacity 0.4s;
-  }
-  #loading.hidden { opacity: 0; }
-  .dots::after {
+  #scan::after {
     content: "";
-    animation: dots 1.4s steps(4, end) infinite;
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 0%, rgba(77,217,255,0.04) 50%, transparent 100%);
+    animation: scan-sweep 6s linear infinite;
   }
-  @keyframes dots {
-    0%   { content: ""; }
-    25%  { content: "."; }
-    50%  { content: ".."; }
-    75%  { content: "..."; }
+  @keyframes scan-sweep {
+    from { transform: translateY(-100%); }
+    to   { transform: translateY(100%); }
   }
-  #credit {
-    position: fixed;
-    bottom: 10px;
-    right: 14px;
-    z-index: 3;
-    font-size: 10px;
-    opacity: 0.45;
+
+  /* vignette */
+  #vignette {
+    position: fixed; inset: 0; z-index: 7; pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.65) 100%);
   }
-  #credit a { color: #fff; }
+
+  /* ------- TARGET RETICLE ------- */
+  #reticle {
+    position: fixed; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 60vh; height: 80vh;
+    max-width: 90vw;
+    z-index: 5;
+    pointer-events: none;
+  }
+  #reticle .corner {
+    position: absolute; width: 28px; height: 28px;
+    border: 2px solid var(--c-cyan);
+    box-shadow: 0 0 10px var(--c-cyan-dim);
+    opacity: 0.7;
+  }
+  #reticle .tl { top: 0;    left: 0;    border-right: 0;  border-bottom: 0; }
+  #reticle .tr { top: 0;    right: 0;   border-left: 0;   border-bottom: 0; }
+  #reticle .bl { bottom: 0; left: 0;    border-right: 0;  border-top: 0;    }
+  #reticle .br { bottom: 0; right: 0;   border-left: 0;   border-top: 0;    }
+
+  /* center crosshair tick */
+  #reticle::before, #reticle::after {
+    content: ""; position: absolute; left: 50%; top: 50%;
+    background: var(--c-cyan); opacity: 0.35;
+  }
+  #reticle::before { width: 1px; height: 16px; transform: translate(-50%, -50%); }
+  #reticle::after  { width: 16px; height: 1px; transform: translate(-50%, -50%); }
+
+  /* ------- HUD PANELS ------- */
+  .panel {
+    position: fixed; z-index: 10;
+    background: var(--c-panel);
+    border: 1px solid var(--c-panel-edge);
+    backdrop-filter: blur(8px) saturate(140%);
+    -webkit-backdrop-filter: blur(8px) saturate(140%);
+    padding: 14px 18px;
+    font-size: 12px;
+    line-height: 1.55;
+    letter-spacing: 0.5px;
+    color: #cce8f5;
+    box-shadow:
+      0 0 24px rgba(0, 0, 0, 0.4),
+      inset 0 0 24px rgba(77, 217, 255, 0.06);
+    clip-path: polygon(
+      0 8px, 8px 0,
+      calc(100% - 16px) 0, 100% 16px,
+      100% calc(100% - 8px), calc(100% - 8px) 100%,
+      16px 100%, 0 calc(100% - 16px)
+    );
+    min-width: 220px;
+  }
+  .panel .head {
+    font-family: var(--font-disp);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    color: var(--c-cyan);
+    text-shadow: 0 0 8px var(--c-cyan-dim);
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed var(--c-cyan-faint);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .panel .head .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--c-green);
+    box-shadow: 0 0 8px var(--c-green);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50%     { opacity: 0.4; transform: scale(0.7); }
+  }
+  .panel .row { display: flex; justify-content: space-between; gap: 12px; }
+  .panel .k { color: var(--c-cyan-dim); }
+  .panel .v { color: #e6f4ff; text-shadow: 0 0 6px rgba(102,200,255,0.4); }
+  .panel .v.green { color: var(--c-green); text-shadow: 0 0 6px rgba(108,255,179,0.5); }
+  .panel .v.amber { color: var(--c-amber); text-shadow: 0 0 6px rgba(255,179,71,0.5); }
+
+  .bar {
+    display: inline-block; width: 90px; height: 8px;
+    background: rgba(77,217,255,0.1);
+    border: 1px solid var(--c-cyan-faint);
+    position: relative; vertical-align: middle;
+  }
+  .bar > span {
+    display: block; height: 100%;
+    background: linear-gradient(90deg, var(--c-cyan), var(--c-green));
+    box-shadow: 0 0 6px var(--c-cyan);
+    transition: width 0.3s;
+  }
+
+  #pTL { top: 20px; left: 20px; }
+  #pTR { top: 20px; right: 20px; }
+  #pBL { bottom: 20px; left: 20px; max-width: 320px; }
+  #pBR { bottom: 20px; right: 20px; }
+
+  #log {
+    height: 100px; overflow: hidden;
+    font-size: 11px;
+    color: rgba(204, 232, 245, 0.75);
+  }
+  #log .line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #log .line .ts { color: var(--c-cyan-dim); margin-right: 8px; }
+  #log .line.warn .msg { color: var(--c-amber); }
+  #log .line.ok   .msg { color: var(--c-green); }
+
+  #cycle {
+    background: transparent;
+    border: 1px solid var(--c-cyan);
+    color: var(--c-cyan);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 2px;
+    padding: 8px 14px;
+    margin-top: 8px;
+    cursor: pointer;
+    text-shadow: 0 0 6px var(--c-cyan-dim);
+    box-shadow: 0 0 10px var(--c-cyan-faint), inset 0 0 10px var(--c-cyan-faint);
+    transition: all 0.15s;
+    width: 100%;
+  }
+  #cycle:hover { background: var(--c-cyan-faint); color: #fff; box-shadow: 0 0 16px var(--c-cyan); }
+  #cycle:active { transform: translateY(1px); }
+
+  /* boot screen */
+  #boot {
+    position: fixed; inset: 0; z-index: 20;
+    background: var(--c-bg-0);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 18px;
+    transition: opacity 0.6s;
+  }
+  #boot.hidden { opacity: 0; pointer-events: none; }
+  #boot .title {
+    font-family: var(--font-disp); font-weight: 700;
+    font-size: 28px; letter-spacing: 8px;
+    color: var(--c-cyan);
+    text-shadow: 0 0 12px var(--c-cyan);
+  }
+  #boot .sub { color: var(--c-cyan-dim); font-size: 13px; letter-spacing: 3px; }
+  #boot .progress {
+    width: 280px; height: 4px;
+    background: rgba(77,217,255,0.1);
+    border: 1px solid var(--c-cyan-faint);
+    overflow: hidden;
+    margin-top: 12px;
+  }
+  #boot .progress > span {
+    display: block; height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--c-cyan), var(--c-green));
+    box-shadow: 0 0 10px var(--c-cyan);
+    transition: width 0.4s;
+  }
+
+  /* corner tags */
+  .tag {
+    position: fixed; z-index: 9;
+    font-family: var(--font-disp); font-weight: 500;
+    font-size: 9px; letter-spacing: 3px;
+    color: var(--c-cyan-dim);
+    pointer-events: none;
+    text-shadow: 0 0 6px var(--c-cyan-faint);
+  }
+  #tagTop { top: 6px; left: 50%; transform: translateX(-50%); }
+  #tagBot { bottom: 6px; left: 50%; transform: translateX(-50%); }
+
+  /* error fallback */
+  #fail {
+    position: fixed; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 25;
+    color: var(--c-red);
+    font-family: var(--font-mono);
+    text-align: center;
+    display: none;
+  }
+  #fail.show { display: block; }
 </style>
 </head>
 <body>
+
 <div id="bg"></div>
+<div id="grid"></div>
 <div id="stars"></div>
+
 <canvas id="canvas"></canvas>
-<div id="loading"><span class="dots">summoning a soul</span></div>
-<div id="info">
-  <div class="label">Now appearing</div>
-  <div class="name" id="name">—</div>
-</div>
-<button id="refresh" onclick="location.reload()">↻ New character</button>
-<div id="credit">
-  Models © <a href="https://www.live2d.com/" target="_blank" rel="noopener">Live2D Inc.</a> — Cubism Web Samples
+
+<div id="reticle">
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+  <div class="corner bl"></div>
+  <div class="corner br"></div>
 </div>
 
+<div id="scan"></div>
+<div id="vignette"></div>
+
+<div class="tag" id="tagTop">SOUL.SYS // RND.MATRIX // v2.3.0 // SECURE LINK</div>
+<div class="tag" id="tagBot">// CUBISM_RUNTIME_OK // GPU_OK // FRAME_BUFFER_OK //</div>
+
+<div class="panel" id="pTL">
+  <div class="head">SYS//STATUS <span class="dot"></span></div>
+  <div class="row"><span class="k">UPLINK</span><span class="v green">ONLINE</span></div>
+  <div class="row"><span class="k">PING</span><span class="v"><span id="ping">042</span> ms</span></div>
+  <div class="row"><span class="k">FPS</span><span class="v" id="fps">60</span></div>
+  <div class="row"><span class="k">CPU</span><span class="v"><span class="bar"><span id="bCpu" style="width:34%"></span></span></span></div>
+  <div class="row"><span class="k">MEM</span><span class="v"><span class="bar"><span id="bMem" style="width:62%"></span></span></span></div>
+  <div class="row"><span class="k">NEURAL</span><span class="v green">SYNCED</span></div>
+</div>
+
+<div class="panel" id="pTR">
+  <div class="head">TARGET//ANALYSIS <span class="dot"></span></div>
+  <div class="row"><span class="k">DESIGNATION</span><span class="v" id="tName">—</span></div>
+  <div class="row"><span class="k">CLASS</span><span class="v">LIVE2D_v4</span></div>
+  <div class="row"><span class="k">STATE</span><span class="v green">ANIMATED</span></div>
+  <div class="row"><span class="k">SIGNAL</span><span class="v"><span class="bar"><span style="width:88%"></span></span></span></div>
+  <div class="row"><span class="k">SOUL_ID</span><span class="v" id="tId">0x0000.0000</span></div>
+  <div class="row"><span class="k">ORIGIN</span><span class="v">CUBISM/SAMPLES</span></div>
+</div>
+
+<div class="panel" id="pBL">
+  <div class="head">LOG//STREAM <span class="dot"></span></div>
+  <div id="log"></div>
+</div>
+
+<div class="panel" id="pBR">
+  <div class="head">CTRL//PANEL <span class="dot"></span></div>
+  <div class="row"><span class="k">UPTIME</span><span class="v" id="uptime">00:00:00</span></div>
+  <div class="row"><span class="k">SECTOR</span><span class="v" id="sector">A7-NORTH</span></div>
+  <div class="row"><span class="k">COORD</span><span class="v" id="coord">0xFF44.A8B2</span></div>
+  <button id="cycle" onclick="location.reload()">↻ CYCLE_TARGET</button>
+</div>
+
+<div id="boot">
+  <div class="title">SOUL.SYS</div>
+  <div class="sub">INITIALIZING NEURAL LINK</div>
+  <div class="progress"><span id="bootBar"></span></div>
+  <div class="sub" id="bootStep">// BOOT</div>
+</div>
+
+<div id="fail"></div>
+
 <script>
+  /* -----------------------  CONFIG  ----------------------- */
   const BASE = 'https://cdn.jsdelivr.net/gh/Live2D/CubismWebSamples@master/Samples/Resources';
   const models = [
     { name: 'Hiyori', dir: 'Hiyori' },
@@ -161,15 +380,100 @@
   ];
 
   const pick = models[Math.floor(Math.random() * models.length)];
-  document.getElementById('name').textContent = pick.name;
+  document.getElementById('tName').textContent = pick.name.toUpperCase();
+  document.getElementById('tId').textContent =
+    '0x' + (Math.random()*0xffffffff|0).toString(16).toUpperCase().padStart(8,'0').replace(/^(.{4})/, '$1.');
+  document.getElementById('coord').textContent =
+    '0x' + (Math.random()*0xffffffff|0).toString(16).toUpperCase().padStart(8,'0').replace(/^(.{4})/, '$1.');
+  document.getElementById('sector').textContent =
+    String.fromCharCode(65 + (Math.random()*26|0)) + (1+Math.random()*9|0) + '-' +
+    ['NORTH','SOUTH','EAST','WEST','CORE'][Math.random()*5|0];
 
-  const setStatus = (msg) => { document.getElementById('loading').textContent = msg; };
+  /* -----------------------  HUD ANIMATIONS  ----------------------- */
+  const startTime = Date.now();
+  function fmtUptime(ms) {
+    const s = (ms / 1000) | 0;
+    const h = (s / 3600) | 0, m = ((s % 3600) / 60) | 0, sec = s % 60;
+    return [h, m, sec].map(n => String(n).padStart(2, '0')).join(':');
+  }
+  setInterval(() => {
+    document.getElementById('uptime').textContent = fmtUptime(Date.now() - startTime);
+    document.getElementById('ping').textContent = String(30 + (Math.random()*40|0)).padStart(3,'0');
+  }, 1000);
+
+  // metric jitter
+  setInterval(() => {
+    const cpu = 25 + Math.random()*30;
+    const mem = 55 + Math.random()*15;
+    document.getElementById('bCpu').style.width = cpu.toFixed(0) + '%';
+    document.getElementById('bMem').style.width = mem.toFixed(0) + '%';
+  }, 1500);
+
+  // FPS counter
+  let frames = 0, lastFps = performance.now();
+  function tickFps() {
+    frames++;
+    const now = performance.now();
+    if (now - lastFps >= 1000) {
+      document.getElementById('fps').textContent = frames;
+      frames = 0; lastFps = now;
+    }
+    requestAnimationFrame(tickFps);
+  }
+  requestAnimationFrame(tickFps);
+
+  // log stream
+  const logEl = document.getElementById('log');
+  const logTemplates = [
+    { lvl: 'ok',   msg: 'cubism_runtime: HEARTBEAT_OK' },
+    { lvl: '',     msg: 'gpu: frame ' + (Math.random()*99999|0).toString().padStart(5,'0') + ' rendered' },
+    { lvl: '',     msg: 'expression_engine: poll idle' },
+    { lvl: '',     msg: 'breath_param.A: 0.42 → 0.51' },
+    { lvl: 'ok',   msg: 'eye_blink: cycle complete' },
+    { lvl: '',     msg: 'tracker: target locked' },
+    { lvl: 'warn', msg: 'thermal: nominal +47C' },
+    { lvl: '',     msg: 'audio_bus: silent' },
+    { lvl: 'ok',   msg: 'soul_link: sync 99.4%' },
+    { lvl: '',     msg: 'cache: hit ratio 0.97' },
+  ];
+  function pushLog(line) {
+    const div = document.createElement('div');
+    div.className = 'line ' + (line.lvl || '');
+    const t = new Date();
+    const ts = [t.getHours(), t.getMinutes(), t.getSeconds()].map(n => String(n).padStart(2,'0')).join(':');
+    div.innerHTML = `<span class="ts">[${ts}]</span><span class="msg">${line.msg}</span>`;
+    logEl.appendChild(div);
+    while (logEl.children.length > 6) logEl.removeChild(logEl.firstChild);
+  }
+  pushLog({ lvl: 'ok', msg: 'boot: SOUL.SYS engaged' });
+  pushLog({ lvl: '',   msg: 'fetching neural model…' });
+  setInterval(() => {
+    pushLog(logTemplates[Math.random() * logTemplates.length | 0]);
+  }, 1800);
+
+  /* -----------------------  BOOT SEQUENCE  ----------------------- */
+  const bootBar = document.getElementById('bootBar');
+  const bootStep = document.getElementById('bootStep');
+  const bootSteps = [
+    '// LOADING CUBISM CORE',
+    '// LOADING PIXI RENDERER',
+    '// LOADING SOUL ADAPTER',
+    '// FETCHING TARGET',
+    '// CALIBRATING',
+    '// LINK ESTABLISHED',
+  ];
+  let bootIdx = 0;
+  function setBoot(pct, idx) {
+    bootBar.style.width = pct + '%';
+    if (idx != null) bootStep.textContent = bootSteps[idx] || bootSteps[bootSteps.length-1];
+  }
+
+  /* -----------------------  SCRIPT LOAD  ----------------------- */
   const fail = (msg) => {
-    const el = document.getElementById('loading');
-    el.textContent = msg;
-    el.style.color = '#ff8aa6';
-    el.style.opacity = '1';
-    el.classList.remove('dots');
+    const el = document.getElementById('fail');
+    el.textContent = '// FATAL: ' + msg;
+    el.classList.add('show');
+    document.getElementById('boot').classList.add('hidden');
     console.error(msg);
   };
 
@@ -178,19 +482,23 @@
       const s = document.createElement('script');
       s.src = src;
       s.onload = () => resolve(src);
-      s.onerror = () => reject(new Error('Failed to load ' + src));
+      s.onerror = () => reject(new Error('script load failed: ' + src));
       document.head.appendChild(s);
     });
   }
 
   (async () => {
     try {
+      setBoot(15, 0);
       await loadScript('https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js');
+      setBoot(35, 1);
       await loadScript('https://cdn.jsdelivr.net/npm/pixi.js@6.5.10/dist/browser/pixi.min.js');
+      setBoot(55, 2);
       await loadScript('https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/cubism4.min.js');
+      setBoot(70, 3);
 
       if (!window.PIXI || !PIXI.live2d || !PIXI.live2d.Live2DModel) {
-        return fail('Live2D runtime did not initialize. PIXI.live2d=' + JSON.stringify(Object.keys(PIXI.live2d || {})));
+        return fail('runtime registration failed');
       }
 
       const app = new PIXI.Application({
@@ -204,14 +512,14 @@
       const Live2DModel = PIXI.live2d.Live2DModel;
       const url = `${BASE}/${pick.dir}/${pick.dir}.model3.json`;
 
-      setStatus('loading ' + pick.name + '…');
       const model = await Live2DModel.from(url, { autoInteract: true });
       app.stage.addChild(model);
+      setBoot(90, 4);
 
       const fit = () => {
         const baseW = model.internalModel.width  || model.width  || 1;
         const baseH = model.internalModel.height || model.height || 1;
-        const margin = 0.92;
+        const margin = 0.85;
         const scale = Math.min(
           window.innerWidth  / baseW,
           window.innerHeight / baseH
@@ -223,16 +531,20 @@
       fit();
       window.addEventListener('resize', fit);
 
-      model.on('hit', (hitAreas) => {
-        if (hitAreas.includes('Body'))      model.motion('TapBody');
-        else if (hitAreas.includes('Head')) model.expression();
+      model.on('hit', (areas) => {
+        if (areas.includes('Body'))      model.motion('TapBody');
+        else if (areas.includes('Head')) model.expression();
+        pushLog({ lvl: 'ok', msg: 'tap_detected: ' + (areas[0] || 'unknown').toLowerCase() });
       });
 
-      const loading = document.getElementById('loading');
-      loading.classList.add('hidden');
-      setTimeout(() => loading.remove(), 500);
+      pushLog({ lvl: 'ok', msg: 'target_acquired: ' + pick.name.toUpperCase() });
+      setBoot(100, 5);
+      setTimeout(() => {
+        document.getElementById('boot').classList.add('hidden');
+        setTimeout(() => document.getElementById('boot').remove(), 700);
+      }, 350);
     } catch (err) {
-      fail('Failed to load ' + pick.name + ': ' + (err && err.message ? err.message : err));
+      fail((err && err.message) ? err.message : String(err));
     }
   })();
 </script>
